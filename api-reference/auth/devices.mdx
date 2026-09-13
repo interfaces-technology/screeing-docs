@@ -1,5 +1,5 @@
 ---
-title: 'GET /api/v1/auth/devices — List Active Devices'
+title: 'GET /api/v1/auth/devices — List Active Device Tokens'
 sidebarTitle: '/auth/devices'
 description: 'GET /api/v1/auth/devices returns all active device tokens for the signed-in web session user — useful for auditing and revocation.'
 ---
@@ -55,9 +55,11 @@ A successful `200` response returns an array of device records. Raw token values
 
 <CodeGroup>
 
-```bash cURL (with session cookie)
+```bash cURL (browser-forwarded session)
+# Session cookie is forwarded automatically in a browser context.
+# For server-side or CLI use, sign in via the Screening Studio first.
 curl https://usescreening.com/api/v1/auth/devices \
-  -H "Cookie: better-auth.session_token=<your-session-token>"
+  --cookie-jar cookies.txt
 ```
 
 ```typescript TypeScript
@@ -107,5 +109,5 @@ console.log(`You have ${devices.length} active device(s)`);
 </Note>
 
 <Info>
-  This endpoint requires a **web cookie session**. You cannot list devices using a device token Bearer — this is intentional, to prevent a compromised token from being able to enumerate or revoke other sessions. Use the Screening Studio at `/account` to manage your devices in the browser.
+  This endpoint requires a **web cookie session**. You cannot list devices using a device token Bearer — this is intentional, to prevent a compromised token from being able to enumerate or revoke other sessions. Use the Screening Studio at [https://usescreening.com/account](https://usescreening.com/account) to manage your devices in the browser.
 </Info>

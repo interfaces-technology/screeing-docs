@@ -1,7 +1,7 @@
 ---
 title: 'GET /api/v1/host/account/bootstrap — Load Host Workspace'
-sidebarTitle: '/host/bootstrap'
-description: 'GET /api/v1/host/account/bootstrap returns the full Studio workspace data for the authenticated host — organisation, films, screenings, and Stripe status.'
+sidebarTitle: 'Bootstrap'
+description: 'GET /api/v1/host/account/bootstrap hydrates the Studio workspace in one request — organisation, films, screenings, and Stripe Connect status.'
 ---
 
 Use this endpoint to hydrate the entire filmmaker workspace in one round trip. Studio calls it on every page load to populate your organisation details, film catalogue, active and upcoming screenings, and Stripe Connect readiness — so you should treat the response as the canonical source of truth for your host UI state.
@@ -32,12 +32,7 @@ A successful response returns HTTP `200` with a single `bootstrap` object. The o
 ```json
 {
   "bootstrap": {
-    "kind": "authenticated",
-    "organisation": { ... },
-    "films": [ ... ],
-    "screenings": [ ... ],
-    "connect": { ... },
-    "team": [ ... ]
+    "kind": "authenticated"
   }
 }
 ```

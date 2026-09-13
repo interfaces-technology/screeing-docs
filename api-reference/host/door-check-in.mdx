@@ -1,7 +1,7 @@
 ---
 title: 'Host Door Check-In API — Verify Tickets at the Door'
-sidebarTitle: '/host/door/check-in'
-description: 'GET and POST /api/v1/host/door/check-in to list and admit ticket holders at the venue door for in-person and hybrid screenings.'
+sidebarTitle: 'Door Check-In'
+description: 'GET and POST /api/v1/host/door/check-in to pre-load and admit ticket holders at the venue door — supports in-person and hybrid screenings.'
 ---
 
 The door check-in endpoints power the front-of-house flow for `in_person` and `hybrid` screenings. Use `GET` to pre-load the full guest list before doors open, and `POST` to admit each ticket holder as they arrive — either by scanning their ticket code from the confirmation email or by looking up their internal ticket ID. Both calls require a valid host-persona token, but you can assign door staff a role that limits them to these endpoints only.
@@ -60,7 +60,7 @@ Retrieve the full ticket list for a screening night, along with live check-in st
 
 ## POST /api/v1/host/door/check-in
 
-Admit a single ticket holder. Supply either `ticketCode` (the alphanumeric code printed in the buyer's confirmation email) or `ticketId` (the internal numeric ID). Ticket codes are the most common workflow — buyers can show the code on their phone or printed confirmation.
+Admit a single ticket holder. Supply either `ticketCode` (the alphanumeric code printed in the buyer's confirmation email) or `ticketId` (the numeric ticket ID). Ticket codes are the most common workflow — buyers can show the code on their phone or printed confirmation.
 
 ### Request body
 
@@ -73,7 +73,7 @@ Admit a single ticket holder. Supply either `ticketCode` (the alphanumeric code 
 </ParamField>
 
 <ParamField body="ticketId" type="number">
-  The internal numeric ticket ID. Either `ticketId` or `ticketCode` must be provided.
+  The numeric ticket ID. Either `ticketId` or `ticketCode` must be provided.
 </ParamField>
 
 ### Response

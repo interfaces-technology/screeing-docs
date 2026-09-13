@@ -1,5 +1,5 @@
 ---
-title: 'Connect Stripe to Receive Screening Payouts'
+title: 'How to Connect Stripe and Receive Screening Payouts'
 sidebarTitle: 'Stripe Connect'
 description: 'Screening uses Stripe Connect Express so buyers pay you directly. Learn how to onboard, check your status, and access your Stripe dashboard.'
 ---
@@ -7,10 +7,14 @@ description: 'Screening uses Stripe Connect Express so buyers pay you directly. 
 Screening uses **Stripe Connect Express** to route ticket revenue directly to you. When a buyer checks out, their payment goes straight to your connected Stripe account — not through Screening first. Screening collects its platform fee (5% + 30p) as an application fee deducted at the point of sale. You are the merchant of record: your name appears on the buyer's card statement, and Stripe pays out your bank account on their standard schedule.
 
 <Warning>
-  You cannot publish paid screenings until your Stripe account is connected and Stripe has activated your `card_payments` capability. The booth will stay in a payouts-not-ready state until verification is complete. Free (£0) screenings are unaffected.
+  You cannot publish paid screenings until your Stripe account is connected and charges are enabled on your account (`ready: true`). The booth will stay in a payouts-not-ready state until verification is complete. Free (£0) screenings are unaffected.
 </Warning>
 
 ## How to connect Stripe
+
+<Note>
+  Before you can start Stripe onboarding, you must accept the **Organiser Agreement** in Studio → Money. Screening requires this before creating a Stripe account on your behalf.
+</Note>
 
 <Steps>
   <Step title="Open Studio Money">
@@ -28,7 +32,7 @@ Screening uses **Stripe Connect Express** to route ticket revenue directly to yo
     Complete every step Stripe presents. Skipping or deferring requirements leaves your account in a restricted state.
   </Step>
   <Step title="Return to Studio">
-    After submitting, Stripe redirects you back to Studio. Screening checks your account status automatically. Once Stripe activates your `card_payments` capability, your account is ready and you can publish paid screenings.
+    After submitting, Stripe redirects you back to Studio. Screening checks your account status automatically. Once Stripe enables charges on your account (`chargesEnabled: true`), your `ready` status becomes `true` and you can publish paid screenings.
   </Step>
 </Steps>
 
@@ -40,16 +44,17 @@ Studio shows a live status badge in **Money**. The underlying API endpoint is:
 GET /api/v1/host/connect/status
 ```
 
-The response includes four fields:
+The response includes these fields:
 
 | Field | What it means |
 |---|---|
 | `chargesEnabled` | Your account can accept card payments |
 | `payoutsEnabled` | Stripe can send funds to your bank account |
 | `detailsSubmitted` | You have completed Stripe's onboarding form |
-| `ready` | All three above are `true` — you can sell tickets |
+| `ready` | `chargesEnabled` is `true` — you can sell tickets |
+| `hostTermsAccepted` | You have accepted the Organiser Agreement |
 
-Until `ready` is `true`, Screening blocks ticket sales on paid screenings.
+Until `ready` is `true`, Screening blocks ticket sales on paid screenings. `hostTermsAccepted` must also be `true` before you can start the Stripe onboarding flow.
 
 ## Accessing your Stripe Dashboard
 

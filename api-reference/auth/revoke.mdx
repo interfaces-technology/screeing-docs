@@ -1,5 +1,5 @@
 ---
-title: 'POST /api/v1/auth/revoke — Revoke Device Tokens'
+title: 'POST /api/v1/auth/revoke — Revoke One or All Devices'
 sidebarTitle: '/auth/revoke'
 description: 'POST /api/v1/auth/revoke revokes a single device token by Bearer, refresh token, or token ID. Use /auth/revoke-all to sign out all devices.'
 ---
@@ -38,11 +38,14 @@ Revoke a device token to immediately invalidate access for a specific integratio
   <Tab title="By token ID (cookie session)">
     Pass the token `id` from `GET /api/v1/auth/devices`. Requires an active web cookie session — this method lets you revoke any of your devices from the Studio without knowing their raw token values.
 
-    ```bash
-    curl -X POST https://usescreening.com/api/v1/auth/revoke \
-      -H "Content-Type: application/json" \
-      -H "Cookie: better-auth.session_token=<your-session-token>" \
-      -d '{ "tokenId": "tok_01hwxyz" }'
+    ```typescript
+    // Must be called from a browser context (session cookie forwarded automatically)
+    await fetch('https://usescreening.com/api/v1/auth/revoke', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tokenId: 'tok_01hwxyz' }),
+    });
     ```
 
   </Tab>
@@ -83,9 +86,13 @@ Revoke a device token to immediately invalidate access for a specific integratio
 
 Call this endpoint to immediately invalidate every active device token for your account, across both personas. This is equivalent to a full sign-out of all native and API clients.
 
-```bash
-curl -X POST https://usescreening.com/api/v1/auth/revoke-all \
-  -H "Cookie: better-auth.session_token=<your-session-token>"
+```typescript
+// Must be called from a browser context (session cookie forwarded automatically)
+const res = await fetch('https://usescreening.com/api/v1/auth/revoke-all', {
+  method: 'POST',
+  credentials: 'include',
+});
+const { revokedCount } = await res.json();
 ```
 
 ### Response

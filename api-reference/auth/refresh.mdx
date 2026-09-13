@@ -1,7 +1,7 @@
 ---
-title: 'POST /api/v1/auth/refresh — Rotate Device Tokens'
+title: 'POST /api/v1/auth/refresh — Rotate Your Device Tokens'
 sidebarTitle: '/auth/refresh'
-description: 'POST /api/v1/auth/refresh rotates both the access token and refresh token. The previous refresh token is immediately invalidated.'
+description: 'POST /api/v1/auth/refresh rotates both the access token and refresh token. The old refresh token is immediately invalidated on use.'
 ---
 
 Call this endpoint to rotate your device token pair before or after the access token expires. Both the access token and the refresh token are replaced in a single operation, and the previous refresh token is invalidated immediately. Store the new pair before making any further API calls.

@@ -1,7 +1,7 @@
 ---
-title: 'GET /api/v1/watcher/booth/:orgSlug/:screeningSlug — Screening Booth Data'
-sidebarTitle: '/watcher/booth'
-description: 'GET /api/v1/watcher/booth/:orgSlug/:screeningSlug returns public metadata for a published screening — title, showtime, price, format, and premiere status.'
+title: 'Watcher Booth API — Fetch Public Screening Metadata'
+sidebarTitle: 'Booth'
+description: 'GET /api/v1/watcher/booth/:orgSlug/:screeningSlug returns public metadata for a published screening — title, showtime, price, format, and premiere flag.'
 ---
 
 Fetch everything your buyer-facing UI needs to render a screening booth — title, showtime, ticket price, format, and whether it is a world premiere — without any authentication. This endpoint is the canonical data source for the `/{org}/{slug}` booth page and is safe to call from any unauthenticated client.

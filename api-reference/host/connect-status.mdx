@@ -1,6 +1,6 @@
 ---
 title: 'GET /api/v1/host/connect/status — Stripe Connect Readiness'
-sidebarTitle: '/host/connect/status'
+sidebarTitle: 'Connect Status'
 description: 'GET /api/v1/host/connect/status returns your Stripe Connect Express account status — charges, payouts, details submission, and overall readiness.'
 ---
 
@@ -36,7 +36,7 @@ Requires a `host`-persona device token or a valid Studio web session cookie. The
 A successful response returns HTTP `200` with the following fields.
 
 <ResponseField name="organisationId" type="number" required>
-  Your organisation's internal numeric ID.
+  Your organisation's numeric ID.
 </ResponseField>
 
 <ResponseField name="organisationName" type="string" required>
@@ -69,16 +69,15 @@ A successful response returns HTTP `200` with the following fields.
 
 ### Additional fields
 
-The live response also includes the following fields for Studio UI use:
+The live response also includes the following fields:
 
 | Field | Type | Notes |
 |-------|------|-------|
-| `hostStatus` | `string` | Internal host account status. |
 | `connectCountry` | `string` | Two-letter ISO country code for your payout market. Locked once a Stripe account is created. |
-| `payoutCurrency` | `string` | ISO 4217 currency code (e.g. `gbp`, `usd`) resolved from your connect country. |
+| `payoutCurrency` | `string` | ISO 4217 currency code (e.g. `gbp`, `usd`) for your payout market. |
 | `connectCountryLocked` | `boolean` | `true` once a Stripe account ID exists. Disconnect payouts to change country. |
 | `feeLabel` | `string` | Human-readable platform fee string (e.g. `"5% + 30p"`). |
-| `markets` | `array` | Supported Stripe Connect payout markets. |
+| `markets` | `array` | Supported payout markets available for your region. |
 
 ## Example response
 
@@ -92,7 +91,6 @@ The live response also includes the following fields for Studio UI use:
   "payoutsEnabled": true,
   "ready": true,
   "hostTermsAccepted": true,
-  "hostStatus": "active",
   "connectCountry": "GB",
   "payoutCurrency": "gbp",
   "connectCountryLocked": true,

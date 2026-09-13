@@ -1,7 +1,7 @@
 ---
 title: 'POST /api/v1/auth/exchange — Mint a Short-Lived JWT'
 sidebarTitle: '/auth/exchange'
-description: 'POST /api/v1/auth/exchange returns a ~15 minute HS256 JWT from a valid refresh token or an active web cookie session.'
+description: 'POST /api/v1/auth/exchange returns a short-lived HS256 JWT (~15 min TTL) from a valid refresh token or an active web browser cookie session.'
 ---
 
 Use this endpoint when you need a stateless, short-lived credential without committing to storing a long-lived device token pair. Pass a valid refresh token (or rely on an active web browser session) and receive an HS256 JWT that all v1 routes accept as a `Bearer` token. Because the JWT expires in roughly 15 minutes it is well suited to per-task server jobs, short-lived CI pipelines, or any scenario where you want to avoid persisting long-lived secrets.
@@ -69,13 +69,15 @@ curl -X POST https://usescreening.com/api/v1/auth/exchange \
   </Tab>
   <Tab title="From a web cookie session">
 
-```bash
-curl -X POST https://usescreening.com/api/v1/auth/exchange \
-  -H "Content-Type: application/json" \
-  --cookie "better-auth.session_token=..." \
-  -d '{
-    "persona": "watcher"
-  }'
+```typescript
+// In a browser context — the session cookie is forwarded automatically
+const res = await fetch('https://usescreening.com/api/v1/auth/exchange', {
+  method: 'POST',
+  credentials: 'include', // sends the HttpOnly session cookie
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ persona: 'watcher' }),
+});
+const { accessToken, expiresAt } = await res.json();
 ```
 
   </Tab>

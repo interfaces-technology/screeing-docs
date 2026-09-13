@@ -1,5 +1,5 @@
 ---
-title: 'Authenticate with the Screening API'
+title: 'Screening API Authentication — Device Tokens and JWTs'
 sidebarTitle: 'Authentication'
 description: 'Use device tokens or short-lived JWTs to authenticate Screening API requests. Learn how to mint, refresh, exchange, and revoke tokens.'
 ---
@@ -10,7 +10,7 @@ The Screening API supports two authentication models: HttpOnly cookie sessions f
 
 <CardGroup cols={2}>
   <Card title="Web / browser" icon="globe">
-    The Screening web app uses **Better Auth** HttpOnly cookie sessions on `.usescreening.com`. If you're building a browser extension or server-side rendered app that can forward cookies, this session is handled for you — no `Authorization` header is needed.
+    The Screening web app uses an HttpOnly cookie session on `.usescreening.com`. If you're building a browser extension or server-side rendered app that can forward cookies, this session is handled for you — no `Authorization` header is needed.
   </Card>
   <Card title="Native / API clients" icon="terminal">
     Scripts, mobile apps, and server integrations use a **device token pair** minted from `POST /api/v1/auth/token`. Pass the access token as `Authorization: Bearer <accessToken>` on every request.

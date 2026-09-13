@@ -1,7 +1,7 @@
 ---
 title: 'Host Screenings API — List, Create, Update, Delete'
-sidebarTitle: '/host/screenings'
-description: 'GET and POST /api/v1/host/screenings to manage timed screening nights. Filter by organisation and paginate results.'
+sidebarTitle: 'Screenings'
+description: 'GET and POST /api/v1/host/screenings to create and manage timed screening nights. Filter by organisation, paginate results, and advance CMS status.'
 ---
 
 Screenings are the timed events that bring your film to an audience. Each screening night is attached to a film, has a format (`online`, `in_person`, or `hybrid`), a showtime, and moves through a simple CMS lifecycle: **Draft → Published → Cancelled**. Creating a screening in `draft` status gives you time to configure the booth before ticket sales open; setting it to `published` opens the booth and makes the event visible on the discover page.
@@ -80,10 +80,14 @@ Create a new screening night. You need the `canManageCms` capability (host admin
 
 <ParamField body="format" type='"online" | "in_person" | "hybrid"' required>
   Screening format.
-  - `online` — stream only; Mux playback token distributed to ticket holders.
+  - `online` — stream only; a signed playback URL is distributed to ticket holders.
   - `in_person` — venue only; door check-in enabled.
   - `hybrid` — both stream and physical venue.
 </ParamField>
+
+<Warning>
+  Online and hybrid screenings require a film file to be uploaded before you can publish. The booth will stay in draft and the publish action will be blocked until a stream is attached to the film record.
+</Warning>
 
 <ParamField body="filmId" type="number">
   ID of the film to attach. When provided, `runtimeMinutes` is inherited from the film record. Either `filmId` or an explicit `runtimeMinutes` must be supplied.
@@ -167,10 +171,10 @@ The lifecycle moves in one direction. Transition by `PATCH`-ing the `status` fie
     Default on creation. The ticket booth is hidden; no one can purchase. Use this state while you configure booth copy, pricing, and venue details.
   </Step>
   <Step title="Published">
-    The booth is open. Buyers can discover and purchase tickets. Plunk sends confirmation emails and schedules 24-hour and 1-hour reminders. Stripe Checkout is active.
+    The booth is open. Buyers can discover and purchase tickets. Confirmation emails are sent automatically, and 24-hour and 1-hour reminders are scheduled. Stripe Checkout is active.
   </Step>
   <Step title="Cancelled">
-    The booth closes immediately. All ticket holders receive a cancellation email via Plunk. Refunds must be initiated separately through the Studio payout dashboard.
+    The booth closes immediately. All ticket holders receive a cancellation email. Refunds must be initiated separately through the Studio payout dashboard.
   </Step>
 </Steps>
 

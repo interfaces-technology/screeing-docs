@@ -1,7 +1,7 @@
 ---
 title: 'POST /api/v1/watcher/access — Verify Ticket Access'
-sidebarTitle: '/watcher/access'
-description: 'POST /api/v1/watcher/access validates a ticket and establishes a live-stream session for the authenticated buyer — required before requesting a stream URL.'
+sidebarTitle: 'Access'
+description: 'POST /api/v1/watcher/access validates a ticket and opens a live-stream session — required before calling /watcher/stream to get a playback URL.'
 ---
 
 Gate entry to a live screening by exchanging a signed ticket token for a short-lived session. Call this endpoint before attempting to retrieve a playback URL from [`/watcher/stream`](/api-reference/watcher/stream). On success the response contains a session token you pass directly to the stream endpoint.

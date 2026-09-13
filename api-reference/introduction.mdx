@@ -1,10 +1,10 @@
 ---
-title: 'Screening API v1 Reference'
+title: 'Screening HTTP API v1 — Host and Watcher Reference'
 sidebarTitle: 'Introduction'
 description: 'The Screening HTTP API v1 provides host and watcher endpoints for building on top of Screening — list films, manage screenings, stream access, and more.'
 ---
 
-The Screening API v1 is a versioned HTTP API that lets you build integrations on top of the Screening platform. Two persona namespaces give you access to every capability: `host` for filmmaker operations (managing films, screenings, and door check-in) and `watcher` for buyer operations (browsing, checkout, and stream access). All request and response schemas are typed Zod contracts from the `@screening/api-contracts` package, and every error returns a consistent JSON envelope so you can handle failures predictably.
+The Screening API v1 is a versioned HTTP API that lets you build integrations on top of the Screening platform. Two persona namespaces give you access to every capability: `host` for filmmaker operations (managing films, screenings, and door check-in) and `watcher` for buyer operations (browsing, checkout, and stream access). Every endpoint validates its inputs with a published schema, and every error returns a consistent JSON envelope so you can handle failures predictably.
 
 ## Base URLs
 
@@ -35,7 +35,7 @@ The API supports two authentication mechanisms depending on your client type.
 
 | Client | Mechanism | How to pass |
 |--------|-----------|-------------|
-| **Web / browser** | HttpOnly cookie session from `/api/auth/*` (Better Auth) | Set automatically — no header needed |
+| **Web / browser** | HttpOnly cookie session | Set automatically — no header needed |
 | **Native / API client** | Device token pair from `POST /api/v1/auth/token`, or short-lived JWT from `POST /api/v1/auth/exchange` | `Authorization: Bearer <token>` |
 | **Playback** | Ticket session UUID (stream-only) | `Authorization: Bearer` on `/api/v1/watcher/stream` |
 
@@ -79,11 +79,7 @@ See the [Authentication guide](/api-reference/authentication) for the full token
 
 ## Validation
 
-Every route validates its request body against a Zod schema from `@screening/api-contracts`. If validation fails you receive a `400 invalid_body` response. You can import and reuse the same schemas in your own TypeScript code:
-
-```typescript
-import { authTokenBodySchema, authTokenResponseSchema } from '@screening/api-contracts';
-```
+Every route validates its request body against a published Zod schema. If validation fails you receive a `400 invalid_body` response.
 
 ## Error format
 

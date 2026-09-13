@@ -22,14 +22,14 @@ This guide covers the most common problems encountered on Screening — both for
   </Accordion>
 
   <Accordion title="Video buffers or quality is poor">
-    Screening streams via **Mux with adaptive bitrate**, which automatically adjusts video quality based on your connection speed. If quality is consistently poor:
+    Screening uses **adaptive bitrate streaming**, which automatically adjusts video quality based on your connection speed. If quality is consistently poor:
 
     - Switch to a **wired ethernet connection** instead of Wi-Fi where possible.
     - Close other bandwidth-heavy applications or browser tabs.
     - Try reloading the page — the player will re-negotiate the best quality tier.
     - If you're on a mobile network, move to a stronger signal area or switch to Wi-Fi.
 
-    Mux adaptive streaming will recover automatically as your connection stabilises.
+    Adaptive streaming will recover automatically as your connection stabilises.
   </Accordion>
 
   <Accordion title="I was mid-stream and got kicked out unexpectedly">
@@ -73,7 +73,7 @@ This guide covers the most common problems encountered on Screening — both for
 
     | Checklist item | How to resolve |
     |---|---|
-    | Film file not uploaded | Go to **Films**, open the film, and upload the film file. Wait for Mux to finish processing — this can take several minutes for longer films. |
+    | Film file not uploaded | Go to **Films**, open the film, and upload the film file. Wait for processing to complete — this can take several minutes for longer films. |
     | Rights not attested | You'll be prompted to confirm rights at the point of publishing. You cannot publish without completing this step. |
     | Stripe not connected | Go to **Money → Connect Stripe** and complete Stripe's onboarding flow. See [Connect Stripe](/payouts/stripe-connect) for details. Free (£0) screenings do not require Stripe. |
   </Accordion>
@@ -84,11 +84,11 @@ This guide covers the most common problems encountered on Screening — both for
     - Your browser may be blocking third-party redirects or cookies — try in a private/incognito window or a different browser.
     - An existing Stripe account may be partially set up — open your [Stripe Dashboard](https://dashboard.stripe.com) directly to check for outstanding requirements.
 
-    If the loop persists after trying the above, contact Screening support with your organisation slug so the team can check your Connect account status via the API.
+    If the loop persists after trying the above, contact Screening support with your organisation slug so the team can investigate your Connect account status.
   </Accordion>
 
   <Accordion title="Buyer confirmation emails are not arriving">
-    Transactional email (confirmations, reminders, postpone/cancel notifications) is handled by the Screening platform via Plunk. If buyers are reporting they haven't received emails, this is a platform-level issue — contact Screening support so the team can investigate delivery logs. Filmmakers cannot manage or resend transactional emails from Studio.
+    Transactional email (confirmations, reminders, postpone/cancel notifications) is handled automatically by the Screening platform. If buyers are reporting they haven't received emails, this is a platform-level issue — contact Screening support so the team can investigate. Filmmakers cannot manage or resend transactional emails from Studio.
 
     In the meantime, direct affected buyers to [usescreening.com/me](https://usescreening.com/me) to access their tickets by email lookup.
   </Accordion>

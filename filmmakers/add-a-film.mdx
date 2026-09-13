@@ -1,5 +1,5 @@
 ---
-title: 'Add a Film to Your Screening Catalogue'
+title: 'Add a Film to Your Screening Catalogue — Studio Guide'
 sidebarTitle: 'Add a Film'
 description: Learn how to create a film record in Studio — title, director, runtime, poster, stream file — and set up on-demand rent and buy options.
 ---
@@ -19,7 +19,7 @@ Films are the canonical entity in Screening. You create a film record once, then
     Enter the required and optional fields described below. At minimum you need a title and a runtime.
   </Step>
   <Step title="Upload the stream file">
-    If you're planning an online or hybrid screening, upload the film file now. Scroll to the **Stream** section and follow the upload prompt. Screening uses Mux Direct Upload — your file is transcoded automatically.
+    If you're planning an online or hybrid screening, upload the film file now. Scroll to the **Stream** section and follow the upload prompt. Select your video file and Screening handles transcoding automatically — no separate upload service required.
   </Step>
   <Step title="Save the film">
     Click **Save**. Your film appears in the Films catalogue. You can edit it at any time before or after scheduling nights.
@@ -41,12 +41,15 @@ Films are the canonical entity in Screening. You create a film record once, then
 |-------|-------|
 | **Director** | Shown on the booth and film page. |
 | **Year** | The production or release year. |
-| **Poster image** | Uploaded via Vercel Blob. Recommended aspect ratio is 2:3 (standard film poster). Appears on the booth, Discover, and the film page. |
+| **Poster image** | Recommended aspect ratio is 2:3 (standard film poster). Appears on the booth, Discover, and the film page. |
 | **Film still** | A landscape image used as a banner or background. |
-| **Rights attestation** | A checkbox confirming you hold the rights to distribute this film. |
+
+### Rights attestation
+
+Before you can publish any screening using this film, you must tick the **rights attestation** checkbox on the film record — a confirmation that you hold the distribution rights. You can tick it when you first create the film or any time before you publish. Studio will prompt you again at publish time if it hasn't been completed.
 
 <Note>
-  You must tick the rights attestation before you can publish a screening that uses this film. Screening requires confirmation that you hold the distribution rights. You'll see a prompt on the film record and again at publish time.
+  The rights attestation is required before publishing. You'll see a prompt on the film record and a blocking check at publish time if it hasn't been ticked.
 </Note>
 
 ## Uploading the stream file
@@ -61,7 +64,7 @@ Screening delivers your film through [Mux](https://mux.com) using signed playbac
     Scroll down to the **Stream** section on the film detail page.
   </Step>
   <Step title="Start the upload">
-    Click **Upload film file** and select your video file. Mux Direct Upload handles files of any size directly from your browser — you don't need to upload to a separate service first.
+    Click **Upload film file** and select your video file. The upload goes directly from your browser — you don't need to upload to a separate service first. Files of any size are supported.
   </Step>
   <Step title="Wait for processing">
     Mux transcodes your file after upload. This usually takes a few minutes for a feature-length film. The film record will show a ready status when transcoding is complete.
