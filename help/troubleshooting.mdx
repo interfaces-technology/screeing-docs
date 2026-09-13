@@ -1,0 +1,106 @@
+---
+title: 'Troubleshooting Common Screening Issues'
+sidebarTitle: 'Troubleshooting'
+description: 'Diagnose and fix common problems with ticket access, live streams, Stripe payouts, and publishing screenings on Screening.'
+---
+
+This guide covers the most common problems encountered on Screening — both for buyers watching films and for filmmakers running screenings. Work through the relevant section for your issue; most problems have a clear cause and a quick fix.
+
+## Streaming & playback
+
+<AccordionGroup>
+  <Accordion title="Stream shows 'Starting soon' even though the showtime has passed">
+    Screening uses **server time**, not your device clock, to determine whether the stream window is open. If your device clock is slightly ahead, you may reach the stream page before it's technically open on the server.
+
+    Wait a minute or two and reload the page. If it still shows "Starting soon" more than five minutes past the scheduled start, check the screening's showtime in Studio — make sure the time was set in the correct timezone. The stream window runs from the scheduled start time through to the runtime plus a closing buffer; if the screening ends and the window has closed, the page will show a thank-you card instead.
+  </Accordion>
+
+  <Accordion title="'Access denied' on the live page">
+    Access to the live stream is verified against the **email address used at checkout**. The most common cause of "Access denied" is visiting the stream page without a valid session, or using a different email.
+
+    Use the **signed ticket link** from your confirmation email — this link carries your session and is the most reliable way to access the stream. If you've lost your confirmation email, visit [usescreening.com/me](https://usescreening.com/me) and look up your ticket by purchase email.
+  </Accordion>
+
+  <Accordion title="Video buffers or quality is poor">
+    Screening streams via **Mux with adaptive bitrate**, which automatically adjusts video quality based on your connection speed. If quality is consistently poor:
+
+    - Switch to a **wired ethernet connection** instead of Wi-Fi where possible.
+    - Close other bandwidth-heavy applications or browser tabs.
+    - Try reloading the page — the player will re-negotiate the best quality tier.
+    - If you're on a mobile network, move to a stronger signal area or switch to Wi-Fi.
+
+    Mux adaptive streaming will recover automatically as your connection stabilises.
+  </Accordion>
+
+  <Accordion title="I was mid-stream and got kicked out unexpectedly">
+    Screening enforces a **one-active-session-per-ticket-email** policy. If the stream opened on a second device — including another browser tab — the newest session wins and your previous session is disconnected.
+
+    Close all other browser tabs or devices that might have the stream open, then reload the page on your intended device. You'll be reconnected immediately.
+  </Accordion>
+</AccordionGroup>
+
+## Ticket & checkout
+
+<AccordionGroup>
+  <Accordion title="My payment failed at checkout">
+    Screening accepts **cards only** — credit and debit cards processed by Stripe. BNPL options like Klarna are not supported.
+
+    If your payment failed:
+    1. Double-check your card number, expiry date, and CVC.
+    2. Make sure your billing address matches the address registered with your bank.
+    3. Try a different card — some banks block unfamiliar online transactions by default; contact your bank if the issue persists.
+    4. Ensure your card hasn't reached its daily spending limit.
+  </Accordion>
+
+  <Accordion title="I was charged but didn't receive a confirmation email">
+    If your card was charged and no confirmation arrived, check your spam or junk folder first. If it's not there, visit [usescreening.com/me](https://usescreening.com/me) and enter the email you used at checkout — your ticket will appear there if the order completed successfully.
+
+    In rare cases, email delivery may be delayed by a few minutes. If you still don't see your ticket in `/me` after 10 minutes, contact Screening support with your purchase email so the team can investigate.
+  </Accordion>
+
+  <Accordion title="QR code won't scan at the door">
+    Ask door staff to try **manual ticket lookup** — they can search by your ticket code directly in the door check-in interface without needing to scan the QR. Your ticket code appears in your confirmation email and at [usescreening.com/me](https://usescreening.com/me).
+
+    If you're having trouble displaying your QR code (e.g. screen brightness or screenshot quality), reading the code out to door staff or showing them the six-character ticket code will work equally well.
+  </Accordion>
+</AccordionGroup>
+
+## Filmmaker & Studio
+
+<AccordionGroup>
+  <Accordion title="Can't publish — checklist item is missing">
+    Studio shows a publish checklist before you can go live. The three most common blockers are:
+
+    | Checklist item | How to resolve |
+    |---|---|
+    | Film file not uploaded | Go to **Films**, open the film, and upload the film file. Wait for Mux to finish processing — this can take several minutes for longer films. |
+    | Rights not attested | You'll be prompted to confirm rights at the point of publishing. You cannot publish without completing this step. |
+    | Stripe not connected | Go to **Money → Connect Stripe** and complete Stripe's onboarding flow. See [Connect Stripe](/payouts/stripe-connect) for details. Free (£0) screenings do not require Stripe. |
+  </Accordion>
+
+  <Accordion title="Stripe Connect button isn't working or redirects me in a loop">
+    This is usually caused by one of the following:
+    - Your country may not be supported by Stripe Connect Express — [check Stripe's supported countries](https://stripe.com/global).
+    - Your browser may be blocking third-party redirects or cookies — try in a private/incognito window or a different browser.
+    - An existing Stripe account may be partially set up — open your [Stripe Dashboard](https://dashboard.stripe.com) directly to check for outstanding requirements.
+
+    If the loop persists after trying the above, contact Screening support with your organisation slug so the team can check your Connect account status via the API.
+  </Accordion>
+
+  <Accordion title="Buyer confirmation emails are not arriving">
+    Transactional email (confirmations, reminders, postpone/cancel notifications) is handled by the Screening platform via Plunk. If buyers are reporting they haven't received emails, this is a platform-level issue — contact Screening support so the team can investigate delivery logs. Filmmakers cannot manage or resend transactional emails from Studio.
+
+    In the meantime, direct affected buyers to [usescreening.com/me](https://usescreening.com/me) to access their tickets by email lookup.
+  </Accordion>
+
+  <Accordion title="Sales are showing in Studio but my payout hasn't arrived">
+    Stripe Express operates on a **rolling 2–7 day payout schedule**. Sales appearing in Studio today may not land in your bank account for several days.
+
+    Check your **Stripe Dashboard** (Studio → Money → Open Stripe Dashboard) for:
+    - Your **next scheduled payout date** and the exact amount
+    - Any **holds or reserves** Stripe has placed on new accounts
+    - Outstanding **verification requirements** that may be delaying payouts
+
+    New Stripe Connect Express accounts often have an extended holding period on their first payout while Stripe reviews the account. Once the first payout clears, subsequent payouts follow the standard schedule.
+  </Accordion>
+</AccordionGroup>

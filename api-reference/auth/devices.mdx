@@ -1,0 +1,111 @@
+---
+title: 'GET /api/v1/auth/devices — List Active Devices'
+sidebarTitle: '/auth/devices'
+description: 'GET /api/v1/auth/devices returns all active device tokens for the signed-in web session user — useful for auditing and revocation.'
+---
+
+Retrieve the list of all active device tokens associated with your account. This endpoint is designed for the account security screen — it tells you which integrations, servers, or apps currently have valid device sessions, and gives you the token IDs you need to revoke individual devices via `POST /api/v1/auth/revoke`.
+
+**Method:** `GET`  
+**URL:** `/api/v1/auth/devices`  
+**Auth required:** Active web cookie session (device token Bearer not accepted)
+
+## Response
+
+A successful `200` response returns an array of device records. Raw token values are never included — tokens are stored as hashes and cannot be retrieved after mint.
+
+<ResponseField name="devices" type="array">
+  An array of active device token records for the authenticated user.
+
+  <Expandable title="Device object fields">
+    <ResponseField name="id" type="string">
+      Unique identifier for this device token. Pass this to `POST /api/v1/auth/revoke` with `{ "tokenId": "<id>" }` to revoke a specific device from a cookie session.
+    </ResponseField>
+
+    <ResponseField name="label" type="string | null">
+      The human-readable label provided when the token was minted (e.g. `"My Server"`). `null` if no label was set.
+    </ResponseField>
+
+    <ResponseField name="persona" type="string">
+      The persona scope of this token — `host` or `watcher`.
+    </ResponseField>
+
+    <ResponseField name="accessTokenPrefix" type="string">
+      The first characters of the access token, for display and identification. The full token value is never returned.
+    </ResponseField>
+
+    <ResponseField name="createdAt" type="string">
+      ISO 8601 timestamp of when this device token was first minted.
+    </ResponseField>
+
+    <ResponseField name="lastUsedAt" type="string | null">
+      ISO 8601 timestamp of the most recent authenticated request made with this token. `null` if the token has never been used after minting.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Error codes
+
+| HTTP status | Code | Description |
+|-------------|------|-------------|
+| `401` | `unauthorized` | No active web cookie session, or the request was authenticated with a device token Bearer instead of a cookie |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+## Example
+
+<CodeGroup>
+
+```bash cURL (with session cookie)
+curl https://usescreening.com/api/v1/auth/devices \
+  -H "Cookie: better-auth.session_token=<your-session-token>"
+```
+
+```typescript TypeScript
+// Must be called from a browser context (or forward the cookie server-side)
+const res = await fetch('https://usescreening.com/api/v1/auth/devices', {
+  credentials: 'include', // forwards the HttpOnly session cookie
+});
+
+if (!res.ok) {
+  const { code, message } = await res.json();
+  throw new Error(`${code}: ${message}`);
+}
+
+const { devices } = await res.json();
+console.log(`You have ${devices.length} active device(s)`);
+```
+
+</CodeGroup>
+
+**Example response:**
+
+```json
+{
+  "devices": [
+    {
+      "id": "tok_01hwxyz",
+      "label": "My Server",
+      "persona": "watcher",
+      "accessTokenPrefix": "scr_live_xxxx",
+      "createdAt": "2025-01-01T10:00:00.000Z",
+      "lastUsedAt": "2025-01-15T08:32:11.000Z"
+    },
+    {
+      "id": "tok_01hwabc",
+      "label": null,
+      "persona": "host",
+      "accessTokenPrefix": "scr_live_yyyy",
+      "createdAt": "2025-01-10T14:20:00.000Z",
+      "lastUsedAt": null
+    }
+  ]
+}
+```
+
+<Note>
+  Device tokens are stored as hashes at rest. This endpoint never returns the raw `scr_live_…` or `scr_rt_live_…` token values — only the `accessTokenPrefix` for display purposes. If you need to revoke a device by ID, copy the `id` field and pass it to `POST /api/v1/auth/revoke`.
+</Note>
+
+<Info>
+  This endpoint requires a **web cookie session**. You cannot list devices using a device token Bearer — this is intentional, to prevent a compromised token from being able to enumerate or revoke other sessions. Use the Screening Studio at `/account` to manage your devices in the browser.
+</Info>

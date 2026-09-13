@@ -1,0 +1,79 @@
+---
+title: 'Connect Stripe to Receive Screening Payouts'
+sidebarTitle: 'Stripe Connect'
+description: 'Screening uses Stripe Connect Express so buyers pay you directly. Learn how to onboard, check your status, and access your Stripe dashboard.'
+---
+
+Screening uses **Stripe Connect Express** to route ticket revenue directly to you. When a buyer checks out, their payment goes straight to your connected Stripe account — not through Screening first. Screening collects its platform fee (5% + 30p) as an application fee deducted at the point of sale. You are the merchant of record: your name appears on the buyer's card statement, and Stripe pays out your bank account on their standard schedule.
+
+<Warning>
+  You cannot publish paid screenings until your Stripe account is connected and Stripe has activated your `card_payments` capability. The booth will stay in a payouts-not-ready state until verification is complete. Free (£0) screenings are unaffected.
+</Warning>
+
+## How to connect Stripe
+
+<Steps>
+  <Step title="Open Studio Money">
+    Sign in to Studio at [usescreening.com/account](https://usescreening.com/account) and navigate to **Money** in the left sidebar.
+  </Step>
+  <Step title="Start the Stripe onboarding flow">
+    Click **Connect Stripe**. Screening redirects you to Stripe's hosted onboarding flow. For UK accounts, this typically takes around five minutes.
+  </Step>
+  <Step title="Complete Stripe's requirements">
+    Stripe will ask for:
+    - **Business details** — your name, address, and type of business (individual or company)
+    - **Bank account** — the account where payouts land
+    - **Identity verification** — a government-issued ID, and in some cases additional documentation
+
+    Complete every step Stripe presents. Skipping or deferring requirements leaves your account in a restricted state.
+  </Step>
+  <Step title="Return to Studio">
+    After submitting, Stripe redirects you back to Studio. Screening checks your account status automatically. Once Stripe activates your `card_payments` capability, your account is ready and you can publish paid screenings.
+  </Step>
+</Steps>
+
+## Checking your connect status
+
+Studio shows a live status badge in **Money**. The underlying API endpoint is:
+
+```
+GET /api/v1/host/connect/status
+```
+
+The response includes four fields:
+
+| Field | What it means |
+|---|---|
+| `chargesEnabled` | Your account can accept card payments |
+| `payoutsEnabled` | Stripe can send funds to your bank account |
+| `detailsSubmitted` | You have completed Stripe's onboarding form |
+| `ready` | All three above are `true` — you can sell tickets |
+
+Until `ready` is `true`, Screening blocks ticket sales on paid screenings.
+
+## Accessing your Stripe Dashboard
+
+Once connected, click **Open Stripe Dashboard** in Studio → Money. From there you can:
+
+- View your payout schedule and history
+- See individual transaction details
+- Review any disputes or chargebacks
+- Update your bank account or business details
+
+## Common issues
+
+<AccordionGroup>
+  <Accordion title="The Connect button returns me to Studio but status still shows 'not ready'">
+    Stripe may have additional requirements to verify before activating `card_payments`. Open your Stripe Dashboard and look for an **action required** banner — there is usually a specific item (e.g. upload an ID document or confirm your address) that needs completing.
+  </Accordion>
+  <Accordion title="Stripe says my account is 'restricted'">
+    A restricted account has an active `card_payments` requirement that Stripe is waiting on. Check your Stripe Dashboard for outstanding items. Requirements can include identity re-verification, proof of address, or additional business documents.
+  </Accordion>
+  <Accordion title="I'm not based in the UK — can I still connect?">
+    Yes. Stripe Connect Express supports multiple countries. Screening is GBP-first at checkout, but Stripe settles into your local payout currency. If your country is not supported by Stripe Express, you will not be able to complete onboarding — [check Stripe's supported countries list](https://stripe.com/global) before requesting host access.
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  Screening never stores your bank details. All financial information is held and processed by Stripe. If you need to update your bank account, do so directly in your Stripe Dashboard.
+</Note>

@@ -1,20 +1,54 @@
 ---
-title: "Introduction"
-description: "Welcome to your project"
+title: "Screening: Film Infrastructure for Independent Filmmakers"
+sidebarTitle: "Home"
+description: "Screening lets filmmakers run ticketed premiere nights — virtual, in-person, or hybrid — and sell on-demand access, with payouts going directly to you via Stripe."
 ---
 
-Write a short description of your product here. What it does, who it's for, and what they can accomplish with it.
+Screening is the infrastructure layer for independent film distribution. Whether you're running a one-night premiere in a community hall, streaming to an international audience, or doing both at once, Screening handles ticketing, live streaming, door check-in, and direct payouts — so you focus on the film.
 
-<Tip>
-  Ready to make this your own? Start by editing this page. Update your `docs.json` file to customize your site. Then fill out the [Quickstart](/quickstart) page.
-</Tip>
+<CardGroup cols={2}>
+  <Card title="How It Works" icon="film" href="/how-it-works">
+    Understand the end-to-end flow from creating a screening to getting paid
+  </Card>
+  <Card title="Pricing" icon="tag" href="/pricing">
+    5% + 30p all-in per paid ticket — card processing included, no monthly fee
+  </Card>
+  <Card title="Filmmaker Guide" icon="clapperboard" href="/filmmakers/request-access">
+    Request access, set up Studio, and run your first premiere
+  </Card>
+  <Card title="API Reference" icon="code" href="/api-reference/introduction">
+    Build on the Screening API with versioned host and watcher endpoints
+  </Card>
+</CardGroup>
 
-<Card title="Quickstart" icon="rocket" href="/quickstart">
-  This card links to the quickstart page in your project.
-</Card>
-<Card title="Components" icon="puzzle-piece" href="https://mintlify.com/docs/components">
-  Add cards, callouts, steps, tabs, and more to design and structure your pages.
-</Card>
-<Card title="Settings" icon="gear" href="https://mintlify.com/docs/organize/settings">
-  Set your site name, branding, and navigation in the `docs.json` file.
-</Card>
+## Get started in four steps
+
+<Steps>
+  <Step title="Request host access">
+    Screening is invite-only for filmmakers. Submit a request at [usescreening.com/host](https://usescreening.com/host) and the team will review your application.
+  </Step>
+  <Step title="Connect Stripe and set up your organisation">
+    Sign in to [Studio](https://usescreening.com/account), accept the host terms, and connect your Stripe account so you can receive payouts.
+  </Step>
+  <Step title="Add your film and schedule a screening night">
+    Create a film record with title, runtime, and poster. Then schedule a screening — choose online, in-person, or hybrid. Upload your film file for online playback.
+  </Step>
+  <Step title="Publish and share">
+    Publish the screening to open the ticket booth at `usescreening.com/{org}/{screening}`. Share the link, and buyers pay directly to you through Stripe Checkout.
+  </Step>
+</Steps>
+
+## Two products, one filmmaker relationship
+
+<CardGroup cols={2}>
+  <Card title="Ticketed Screenings" icon="ticket" href="/filmmakers/create-a-screening">
+    Run a timed premiere night. Buyers get a ticket email, QR code, and live stream access or door entry — all from one checkout.
+  </Card>
+  <Card title="On-Demand Rent & Buy" icon="play" href="/filmmakers/studio-overview">
+    Keep the film earning after the premiere. Set rental windows and permanent purchase options on your film's catalog page.
+  </Card>
+</CardGroup>
+
+<Note>
+  Buyers do not need an account to purchase a ticket. An account on `/me` is optional and lets buyers keep all their tickets in one place.
+</Note>

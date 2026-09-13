@@ -1,0 +1,90 @@
+---
+title: 'GET /api/v1/watcher/me — Current Buyer Profile'
+sidebarTitle: '/watcher/me'
+description: 'GET /api/v1/watcher/me returns the authenticated watcher''s user profile and capabilities — useful for personalisation and feature gating.'
+---
+
+Retrieve the profile of the currently signed-in buyer along with a capabilities map describing which features are enabled for their account. Use this endpoint to confirm that a watcher is authenticated, display their name or email in your UI, or conditionally unlock features based on their capability flags — all in a single request.
+
+If the request carries no valid session, the endpoint returns `401` rather than a partial profile, making it a reliable authentication check.
+
+## Request
+
+**Method:** `GET`  
+**URL:** `https://usescreening.com/api/v1/watcher/me`  
+**Auth:** Required — pass a watcher device token (`scr_live_*` / `scr_test_*`) as a Bearer token, or rely on an active HttpOnly web cookie session.
+
+## Response
+
+<ResponseField name="user" type="object">
+  The authenticated buyer's profile data.
+
+  <Expandable title="user fields">
+    <ResponseField name="id" type="string">
+      Unique identifier for the watcher account.
+    </ResponseField>
+
+    <ResponseField name="email" type="string">
+      The email address associated with the account, e.g. `"hello@example.com"`.
+    </ResponseField>
+
+    <ResponseField name="name" type="string">
+      The display name set by the watcher.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="capabilities" type="object">
+  A key-value map of feature flags enabled for this user. Keys are feature
+  identifiers (strings) and values vary by feature. Check for the presence and
+  value of a key before relying on a capability in your UI — the set of available
+  capability keys may expand over time.
+</ResponseField>
+
+```json
+{
+  "user": {
+    "id": "usr_9kXqLmT3",
+    "email": "maya@example.com",
+    "name": "Maya Chen"
+  },
+  "capabilities": {
+    "earlyAccess": true,
+    "maxConcurrentStreams": 2
+  }
+}
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Auth check" icon="shield-check">
+    Call `/watcher/me` on page load. A `200` response confirms the user is signed
+    in; `401` means they need to log in before accessing gated content.
+  </Card>
+  <Card title="Personalisation" icon="user">
+    Display `user.name` in a welcome header or pre-fill `user.email` on checkout
+    forms for a smoother buying experience.
+  </Card>
+  <Card title="Feature gating" icon="toggle-on">
+    Read the `capabilities` map to show or hide experimental features, enforce
+    concurrent stream limits, or surface early-access content.
+  </Card>
+  <Card title="Session persistence" icon="clock">
+    Use this endpoint to re-hydrate a watcher session after a page refresh without
+    storing sensitive data in client-side storage.
+  </Card>
+</CardGroup>
+
+## Example
+
+```bash
+curl https://usescreening.com/api/v1/watcher/me \
+  -H 'Authorization: Bearer scr_live_...'
+```
+
+## Error Responses
+
+| Status | Code | Meaning |
+|--------|------|---------|
+| `401` | `unauthorized` | No valid watcher device token or active cookie session was found. |

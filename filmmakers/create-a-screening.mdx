@@ -1,0 +1,124 @@
+---
+title: 'Create and Configure a Screening Night'
+sidebarTitle: 'Create Screening'
+description: Schedule a ticketed screening night in Studio — choose a format, set showtime, configure ticket tiers and capacity, and add venue details.
+---
+
+A screening is a timed event attached to a film. You create the film once, then schedule one or more nights from it — an opening premiere, a second run, an online encore. Each night has its own showtime, format, ticket pricing, and capacity. New screenings always start as a **Draft**, which shows a public Coming Soon page but does not open ticket sales until you publish.
+
+## Create a screening night
+
+<Steps>
+  <Step title="Open Films in Studio">
+    Go to [/account](https://usescreening.com/account) and select **Films** in the left navigation.
+  </Step>
+  <Step title="Select the film">
+    Click the film you want to schedule a night for. If you haven't added the film yet, [add it first](/filmmakers/add-a-film).
+  </Step>
+  <Step title="Create a new night">
+    On the film detail page, click **New night**. The screening form opens.
+  </Step>
+  <Step title="Fill in the form">
+    Set the format, showtime, ticket tiers, capacity, and any additional options described on this page.
+  </Step>
+  <Step title="Save as draft">
+    Click **Save as draft**. Your screening is created with Coming Soon status. Buyers can see it on Discover if you've listed it, but cannot buy tickets yet. [Publish separately](/filmmakers/publish-and-share) when you're ready to open sales.
+  </Step>
+</Steps>
+
+## Screening formats
+
+<Tabs>
+  <Tab title="Online">
+    An online screening is stream-only. Buyers receive a link to watch at `usescreening.com/{org}/{slug}/live` during the live window. There is no door entry — no QR code is issued and no venue details are shown.
+
+    **Requirements before publish:**
+    - Stream file uploaded and processed (Mux)
+    - Rights attested on the film record
+    - Stripe connected
+
+    Buyers need only their purchase email to access the stream.
+  </Tab>
+  <Tab title="In Person">
+    An in-person screening is door-entry only. Buyers receive a confirmation email with a QR code and ticket code. Door staff scan or search the code on the night using the Door view in Studio.
+
+    **Requirements before publish:**
+    - Venue name and address filled in
+    - Stripe connected
+
+    No stream is served for in-person tickets. The `/live` route is not active.
+  </Tab>
+  <Tab title="Hybrid">
+    A hybrid screening gives buyers the choice at checkout: attend in the room or watch the stream online. Both audiences see the same showtime. In-person buyers get a QR code; online buyers get a stream link. Revenue from both ticket types flows into the same screening.
+
+    **Requirements before publish:**
+    - Stream file uploaded and processed (Mux)
+    - Venue name and address filled in
+    - Rights attested on the film record
+    - Stripe connected
+
+    <Note>
+      The QR code does not unlock the stream, and the stream link does not work at the door. The two ticket types are separate.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Showtime and runtime
+
+Set the **start time** for your screening. Screening uses the film's runtime (set on the film record) to calculate the end of the live window automatically. The close window is: start time + film runtime + a configurable **close-late buffer** (a grace period after the credits). You can adjust the buffer on the screening form.
+
+<Tip>
+  Tick **Premiere** on the form if this is the opening night of the film. Premiere is a label — it appears as a badge on the booth and in emails. It is not a separate product or a different ticket type.
+</Tip>
+
+## Ticket tiers
+
+Each screening supports two ticket tiers out of the box:
+
+| Tier | Typical use |
+|------|------------|
+| **Standard** | Full-price admission |
+| **Concession** | Discounted rate — students, unwaged, OAPs |
+
+Set a price and an optional capacity for each tier independently. Leave a tier's capacity blank to make it unlimited within the overall screening cap.
+
+## Capacity
+
+Set an overall capacity for the screening, a per-tier cap, or both. When a tier sells out, its buy button disappears from the booth. When the overall cap is reached, the booth shows the screening as sold out.
+
+<Note>
+  Capacity is optional. If you leave it blank, Screening will not cap ticket sales automatically.
+</Note>
+
+## Late sales
+
+By default, ticket sales close at the screening's start time. Toggle **Late sales** on if you want to keep the checkout open after the show has started — useful for online screenings where latecomers can still join mid-stream.
+
+## Venue details (in-person and hybrid)
+
+For in-person and hybrid screenings, add:
+
+- **Venue name** — shown on the booth and in buyer confirmation emails
+- **Venue address** — shown on the booth and included in the calendar `.ics` download
+
+These fields are required before you can publish an in-person or hybrid screening.
+
+## Interest and waitlist
+
+Before your tickets are on sale, you can collect demand by enabling the **Interest** toggle on the screening form. This creates a public page at `usescreening.com/interest/{slug}` where visitors can register their interest without paying.
+
+Switch off Interest and publish the screening when you're ready to open sales — registered interest is not automatically converted to tickets.
+
+## Recurring series
+
+To run the same screening on a repeating schedule, enable **Recurring** on the form and set an interval. Screening creates individual night records for each occurrence, each with its own ticket sales and check-in.
+
+## CMS status reference
+
+| Status | Buyer sees | Sales open |
+|--------|-----------|-----------|
+| **Draft** | Coming Soon page | No |
+| **Published** | Full booth with buy button | Yes |
+| **Cancelled** | Closed booth | No |
+
+New screenings always start as Draft. [Publish from Studio → Nights](/filmmakers/publish-and-share) when you're ready to go live.

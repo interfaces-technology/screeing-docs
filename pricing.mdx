@@ -1,0 +1,103 @@
+---
+title: 'Screening Pricing: 5% + 30p All-In Per Ticket'
+sidebarTitle: 'Pricing'
+description: 'Screening charges 5% + 30p per paid ticket — card processing included, no monthly subscription, direct payouts via Stripe Connect.'
+---
+
+Screening charges a single all-in rate on every paid ticket and on-demand sale. There is no monthly subscription on the Free tier, no setup fee, and no separate card processing charge on standard sales. You pay only when you sell, and the money goes straight to your connected Stripe account.
+
+## Plans
+
+| Plan | Platform fee | What's included |
+|---|---|---|
+| **Free** | **5% + 30p** per paid ticket | Full ticketing, live streaming, on-demand, email reminders, Studio, door check-in |
+| **Pro** *(coming soon)* | **4% + 30p** per paid ticket | Everything in Free, plus audience export, segmentation, and CRM tools — at ~£20–25/mo |
+
+<Note>
+  **"All-in" means exactly that.** The 5% + 30p covers Stripe's card processing costs on standard domestic card transactions — there is no additional payment processing fee added on top. Screening absorbs the Stripe fee so that the rate you see is the rate you pay.
+</Note>
+
+Pro is not yet available. When it launches, the 1% fee reduction is a perk bundled with audience tools — it will not be sold as a standalone fee discount without the accompanying features.
+
+## Worked example
+
+Take a standard **£10 ticket** on the Free tier:
+
+| What | Amount |
+|---|---|
+| Buyer pays | £10.00 |
+| Screening fee (5% + 30p) | −£0.80 |
+| **You receive** | **£9.20** |
+
+Screening's net after absorbing typical UK card processing costs is approximately 25–45p per £10 ticket. On international cards with foreign exchange, that margin narrows — which is one reason checkout is GBP-first with a recommended minimum ticket price for online and hybrid nights.
+
+## What counts as a paid ticket
+
+The 5% + 30p fee applies to every completed paid sale:
+
+- Standard and concession ticket tiers on a screening night
+- On-demand rentals (timed access)
+- On-demand purchases (lasting access)
+
+**Free tickets collect no fee.** If you set a £0 ticket price — for a press screening, a community event, or a giveaway — Screening charges nothing.
+
+## Fee waives
+
+Platform admins can waive the Screening portion of the fee in two ways, applied per organisation or per individual screening night:
+
+| Waive mode | What it means |
+|---|---|
+| **Host pays Stripe only** | Screening's 5% cut is removed; the buyer or host absorbs only Stripe's card processing cost |
+| **Full waive** | Screening covers everything — neither you nor the buyer pays any platform fee |
+
+Waived fees are set by platform ops and are not something you configure yourself in Studio. If you believe your situation warrants a waived fee, reach out via the host access request process.
+
+## Checkout details
+
+Understanding what happens at checkout helps you set ticket prices that protect your margin and meet buyer expectations.
+
+<AccordionGroup>
+  <Accordion title="Cards only — no Klarna or BNPL">
+    Checkout accepts credit and debit cards only. Buy Now Pay Later options (including Klarna) are disabled. Klarna's processing fees exceed Screening's entire platform fee, which would make the all-in model unworkable. This is a permanent checkout constraint, not a temporary limitation.
+  </Accordion>
+  <Accordion title="Recommended minimum: £8 for online and hybrid tickets">
+    On a very low ticket price, international card fees and foreign exchange costs can erode your payout significantly. Screening recommends a minimum ticket price of **£8** for online and hybrid nights to protect your margin, especially if you expect buyers paying from outside the UK.
+  </Accordion>
+  <Accordion title="GBP-first checkout; foreign cards accepted">
+    Checkout runs in GBP by default. Buyers using foreign-issued cards (EUR, USD, AUD, NZD, and others) can still complete their purchase — Stripe handles the conversion. If you are a host based outside the UK with a non-GBP Stripe Connect account, you settle payouts in your account's payout currency.
+  </Accordion>
+  <Accordion title="All sales final — no host refund UI">
+    There is no in-app refund button in v1. All ticket sales are treated as final at the point of purchase. If a buyer raises a chargeback with their bank, that is handled outside Screening via Stripe directly. Scheduling changes (postponements and cancellations) send automated emails to ticket holders but do not trigger automatic refunds through the platform.
+  </Accordion>
+</AccordionGroup>
+
+## Full fee breakdown
+
+| Scenario | Ticket price | Screening fee | You receive |
+|---|---|---|---|
+| Standard ticket (Free tier) | £10.00 | £0.80 (5% + 30p) | £9.20 |
+| Standard ticket (Free tier) | £15.00 | £1.05 (5% + 30p) | £13.95 |
+| Standard ticket (Free tier) | £20.00 | £1.30 (5% + 30p) | £18.70 |
+| Free ticket | £0.00 | £0.00 | £0.00 |
+| Pro tier ticket *(coming soon)* | £10.00 | £0.70 (4% + 30p) | £9.30 |
+
+<Info>
+  These figures show what Screening deducts. Stripe may apply additional fees on high-risk cards, international transactions, or currency conversions in edge cases — the "all-in" promise covers standard domestic card processing on GBP transactions.
+</Info>
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="When do I receive my payout?">
+    Payouts go directly to your connected Stripe Express account. Stripe's standard payout schedule applies — typically 2–7 business days after a transaction, depending on your account's payout settings and country. Screening does not hold funds or control payout timing beyond what Stripe requires.
+  </Accordion>
+  <Accordion title="Do I need a monthly subscription to use Screening?">
+    No. The Free tier has no monthly fee. You pay 5% + 30p only when you make a sale. Pro (coming soon) will carry a monthly subscription but also reduces the fee rate to 4% + 30p and unlocks audience tools.
+  </Accordion>
+  <Accordion title="Can I pass the fee on to buyers?">
+    Ticket prices are set by you in Studio. If you want to price tickets at £10.80 to recover the fee on a £10 net payout, that is your choice — but Screening does not have a built-in "pass fee to buyer" toggle. The fee is simply deducted from what Screening forwards to your Stripe account.
+  </Accordion>
+  <Accordion title="What happens if a buyer's card is declined?">
+    Declined payments do not complete checkout, so no fee is charged and no ticket is issued. The buyer is returned to the booth and can retry with a different card. Screening does not retry failed payments.
+  </Accordion>
+</AccordionGroup>

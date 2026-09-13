@@ -1,0 +1,74 @@
+---
+title: 'Understanding Screening Fees and Payouts'
+sidebarTitle: 'Fees Explained'
+description: 'A full breakdown of the Screening fee model — 5% + 30p all-in, waive modes, free tickets, and what filmmakers actually receive per sale.'
+---
+
+Screening charges a single, all-in fee per paid sale. There is no separate Stripe processing line, no monthly platform fee, and no hidden charges on standard transactions. The 5% + 30p covers both the Screening platform fee and the Stripe card processing cost — Screening absorbs the Stripe fees so you don't have to calculate them yourself.
+
+<Note>
+  **All-in means all-in.** On a standard sale you will never see a separate Stripe processing charge on your connected account. Screening deducts one combined application fee at checkout and handles the Stripe settlement internally. Your payout is the face value of the ticket minus the single Screening fee.
+</Note>
+
+## Fee tiers
+
+| Plan | Fee per paid sale | Notes |
+|---|---|---|
+| **Free (default)** | **5% + 30p** | Card processing absorbed. No monthly cost. |
+| **Pro** _(coming soon)_ | **4% + 30p** | Same all-in promise. Bundled with audience tools. |
+
+Pro is not available yet. When it launches, the 1% reduction is a perk bundled with audience features — it will not be sold as a standalone fee discount.
+
+## Worked example — £10 ticket
+
+| | Amount |
+|---|---|
+| Buyer pays | £10.00 |
+| Screening fee (5% + 30p) | £0.80 |
+| **Filmmaker receives** | **£9.20** |
+| Stripe processing | Paid by Screening |
+
+For a £10 ticket, Screening's net after covering Stripe card processing is typically around **25–45p**, depending on the card type and issuing country.
+
+## Free tickets
+
+When the ticket price is set to **£0**, no fee is charged and no payment is collected. The buyer receives a confirmation email and a valid ticket code — the full booking flow still runs, it just skips Stripe Checkout entirely.
+
+## Fee waive modes
+
+Platform admins can apply a fee waive to a specific organisation or a specific night on request. There are two modes:
+
+<CardGroup cols={2}>
+  <Card title="Standard waive" icon="percent">
+    Screening's markup is removed (£0 platform fee). The filmmaker pays the Stripe processing cost directly — approximately **£0.35 on a £10 ticket** for a standard UK card.
+  </Card>
+  <Card title="Full waive" icon="circle-check">
+    Screening absorbs everything, including the Stripe processing cost. The filmmaker keeps **100% of the face value**.
+  </Card>
+</CardGroup>
+
+Waives are applied by the Screening team, not self-serve. If you're running a charitable event or a specific partnership premiere, contact Screening support to discuss eligibility.
+
+## On-demand (rent and buy)
+
+The same **5% + 30p** fee applies to each on-demand transaction — both rentals and purchases. There is no separate catalog fee or different rate for on-demand sales.
+
+## Chargebacks
+
+If a buyer successfully disputes a charge with their bank, Stripe levies a **£20 dispute fee** against your connected account. This is a Stripe policy — Screening does not add any additional charge on top of it.
+
+<Warning>
+  Chargeback fees come directly out of your Stripe balance. Screening has no control over Stripe's dispute process. If you receive a chargeback notification, respond promptly through your Stripe Dashboard to contest it with evidence.
+</Warning>
+
+## What you actually keep (summary)
+
+| Ticket price | Screening fee | You receive |
+|---|---|---|
+| £0 (free) | £0.00 | £0.00 |
+| £8.00 | £0.70 | £7.30 |
+| £10.00 | £0.80 | £9.20 |
+| £15.00 | £1.05 | £13.95 |
+| £20.00 | £1.30 | £18.70 |
+
+_All figures use the standard Free tier (5% + 30p). Stripe card processing is absorbed._

@@ -1,0 +1,125 @@
+---
+title: 'POST /api/v1/auth/exchange — Mint a Short-Lived JWT'
+sidebarTitle: '/auth/exchange'
+description: 'POST /api/v1/auth/exchange returns a ~15 minute HS256 JWT from a valid refresh token or an active web cookie session.'
+---
+
+Use this endpoint when you need a stateless, short-lived credential without committing to storing a long-lived device token pair. Pass a valid refresh token (or rely on an active web browser session) and receive an HS256 JWT that all v1 routes accept as a `Bearer` token. Because the JWT expires in roughly 15 minutes it is well suited to per-task server jobs, short-lived CI pipelines, or any scenario where you want to avoid persisting long-lived secrets.
+
+**Method:** `POST`  
+**URL:** `/api/v1/auth/exchange`  
+**Auth required:** A valid refresh token in the request body, **or** an active web cookie session  
+**Rate limit:** 10 requests per minute per IP
+
+## Request body
+
+<ParamField body="refreshToken" type="string">
+  An existing refresh token (`scr_rt_live_…` or `scr_rt_test_…`). If provided, `persona` is inferred from the token — you do not need to supply it separately. Minimum 16 characters, maximum 512 characters.
+</ParamField>
+
+<ParamField body="persona" type="string">
+  Required when authenticating via a **web cookie session** (i.e. no `refreshToken` in the body). Must be `host` or `watcher`. Ignored when a `refreshToken` is provided — the token's own persona is used.
+</ParamField>
+
+## Response
+
+A successful `200` response returns the short-lived JWT and its expiry.
+
+<ResponseField name="accessToken" type="string">
+  A short-lived HS256 JWT (~15 minute TTL). Pass this as `Authorization: Bearer <accessToken>` on any v1 route.
+</ResponseField>
+
+<ResponseField name="tokenType" type="string">
+  Always `"Bearer"`.
+</ResponseField>
+
+<ResponseField name="expiresAt" type="string">
+  ISO 8601 timestamp of when the JWT expires (~15 minutes from mint).
+</ResponseField>
+
+<ResponseField name="persona" type="string">
+  The persona this JWT is scoped to — `host` or `watcher`.
+</ResponseField>
+
+## Error codes
+
+| HTTP status | Code | Description |
+|-------------|------|-------------|
+| `400` | `invalid_json` | The request body is not valid JSON |
+| `400` | `invalid_body` | Missing `persona` when using a cookie session, or malformed `refreshToken` |
+| `401` | `unauthorized` | No valid cookie session found and no `refreshToken` provided |
+| `401` | `invalid_token` | The provided refresh token is invalid or expired |
+| `403` | `forbidden` | Requested `host` persona from a cookie session on an account without host permission |
+| `429` | `rate_limited` | Too many requests from this IP — wait before retrying |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+## Examples
+
+<Tabs>
+  <Tab title="From a refresh token">
+
+```bash
+curl -X POST https://usescreening.com/api/v1/auth/exchange \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refreshToken": "scr_rt_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  }'
+```
+
+  </Tab>
+  <Tab title="From a web cookie session">
+
+```bash
+curl -X POST https://usescreening.com/api/v1/auth/exchange \
+  -H "Content-Type: application/json" \
+  --cookie "better-auth.session_token=..." \
+  -d '{
+    "persona": "watcher"
+  }'
+```
+
+  </Tab>
+  <Tab title="TypeScript">
+
+```typescript
+// Exchange a refresh token for a short-lived JWT
+const res = await fetch('https://usescreening.com/api/v1/auth/exchange', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ refreshToken: 'scr_rt_live_…' }),
+});
+
+if (!res.ok) {
+  const { code, message } = await res.json();
+  throw new Error(`${code}: ${message}`);
+}
+
+const { accessToken, tokenType, expiresAt, persona } = await res.json();
+
+// Use the JWT for the duration of your task (~15 min)
+const api = await fetch('https://usescreening.com/api/v1/watcher/discover', {
+  headers: { 'Authorization': `${tokenType} ${accessToken}` },
+});
+```
+
+  </Tab>
+</Tabs>
+
+**Example response:**
+
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "tokenType": "Bearer",
+  "expiresAt": "2025-01-15T12:15:00.000Z",
+  "persona": "watcher"
+}
+```
+
+<Tip>
+  JWT exchange does **not** consume or rotate your refresh token. You can call this endpoint multiple times with the same refresh token and receive a fresh short-lived JWT each time — up until the refresh token itself expires.
+</Tip>
+
+<Note>
+  Unlike device access tokens, the JWT minted here cannot be revoked individually. If you need revocable, long-lived access, use the device token pair from `/api/v1/auth/token` instead.
+</Note>

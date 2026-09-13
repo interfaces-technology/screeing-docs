@@ -1,0 +1,100 @@
+---
+title: 'Add a Film to Your Screening Catalogue'
+sidebarTitle: 'Add a Film'
+description: Learn how to create a film record in Studio — title, director, runtime, poster, stream file — and set up on-demand rent and buy options.
+---
+
+Films are the canonical entity in Screening. You create a film record once, then schedule as many screening nights as you like from it — an opening night, a second run, an online encore. Everything about the film — its poster, stream file, and on-demand pricing — lives in one place and applies to every night you create from it. Start by adding the film to your Studio catalogue.
+
+## Add a film
+
+<Steps>
+  <Step title="Open the Films section">
+    In Studio at [/account](https://usescreening.com/account), select **Films** in the left navigation.
+  </Step>
+  <Step title="Create a new film">
+    Click **New film**. A form opens for the film's details.
+  </Step>
+  <Step title="Fill in the film details">
+    Enter the required and optional fields described below. At minimum you need a title and a runtime.
+  </Step>
+  <Step title="Upload the stream file">
+    If you're planning an online or hybrid screening, upload the film file now. Scroll to the **Stream** section and follow the upload prompt. Screening uses Mux Direct Upload — your file is transcoded automatically.
+  </Step>
+  <Step title="Save the film">
+    Click **Save**. Your film appears in the Films catalogue. You can edit it at any time before or after scheduling nights.
+  </Step>
+</Steps>
+
+## Film fields
+
+### Required
+
+| Field | Notes |
+|-------|-------|
+| **Title** | The public name of the film, shown on the booth, confirmation emails, and the film page. |
+| **Runtime (minutes)** | How long the film runs. Screening uses this to calculate the end of the live stream window — for example, a 90-minute film that starts at 19:30 closes the stream at approximately 21:00, plus any close-late buffer you configure. |
+
+### Optional
+
+| Field | Notes |
+|-------|-------|
+| **Director** | Shown on the booth and film page. |
+| **Year** | The production or release year. |
+| **Poster image** | Uploaded via Vercel Blob. Recommended aspect ratio is 2:3 (standard film poster). Appears on the booth, Discover, and the film page. |
+| **Film still** | A landscape image used as a banner or background. |
+| **Rights attestation** | A checkbox confirming you hold the rights to distribute this film. |
+
+<Note>
+  You must tick the rights attestation before you can publish a screening that uses this film. Screening requires confirmation that you hold the distribution rights. You'll see a prompt on the film record and again at publish time.
+</Note>
+
+## Uploading the stream file
+
+Screening delivers your film through [Mux](https://mux.com) using signed playback tokens — the raw video file is never exposed directly to the browser. Upload the file once and Screening handles transcoding and delivery for every screening and on-demand order you create from this film.
+
+<Steps>
+  <Step title="Open the film record">
+    In **Studio → Films**, click the film you want to add a stream to.
+  </Step>
+  <Step title="Go to the Stream section">
+    Scroll down to the **Stream** section on the film detail page.
+  </Step>
+  <Step title="Start the upload">
+    Click **Upload film file** and select your video file. Mux Direct Upload handles files of any size directly from your browser — you don't need to upload to a separate service first.
+  </Step>
+  <Step title="Wait for processing">
+    Mux transcodes your file after upload. This usually takes a few minutes for a feature-length film. The film record will show a ready status when transcoding is complete.
+  </Step>
+</Steps>
+
+<Warning>
+  Online and hybrid screenings require a ready stream file before you can publish. If the file is still processing when you try to publish, Studio will block the action and show a status message.
+</Warning>
+
+## On-demand options
+
+After a screening night ends, you can keep the film available for viewers to rent or buy. Set these options on the film record — they apply to the film's catalog page at `usescreening.com/{org}/film/{film-slug}`.
+
+<CardGroup cols={2}>
+  <Card title="Rent" icon="clock">
+    Set a rental price and a rental duration in hours. When a buyer pays, the access window opens immediately and counts down from the moment of purchase. After the window closes, they need to rent again to watch.
+  </Card>
+  <Card title="Buy" icon="lock-open">
+    Set a buy price for permanent access. Buyers who purchase the film keep access to it indefinitely under the same email address used at checkout.
+  </Card>
+</CardGroup>
+
+<Tip>
+  You don't need to set on-demand options right away. Configure them whenever you're ready for the film to be available between or after your screening nights.
+</Tip>
+
+## Film slug and catalog URL
+
+When you create a film, Screening generates a URL slug from the title. The film's public catalog page lives at:
+
+```
+usescreening.com/{your-org}/film/{film-slug}
+```
+
+You can customise the slug on the film record before publishing. Once buyers have purchased or rented via a URL, avoid changing the slug — it will break any existing links.

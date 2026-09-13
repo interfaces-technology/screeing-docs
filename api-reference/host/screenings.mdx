@@ -1,0 +1,252 @@
+---
+title: 'Host Screenings API — List, Create, Update, Delete'
+sidebarTitle: '/host/screenings'
+description: 'GET and POST /api/v1/host/screenings to manage timed screening nights. Filter by organisation and paginate results.'
+---
+
+Screenings are the timed events that bring your film to an audience. Each screening night is attached to a film, has a format (`online`, `in_person`, or `hybrid`), a showtime, and moves through a simple CMS lifecycle: **Draft → Published → Cancelled**. Creating a screening in `draft` status gives you time to configure the booth before ticket sales open; setting it to `published` opens the booth and makes the event visible on the discover page.
+
+## Endpoints at a glance
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/api/v1/host/screenings` | List screenings for your organisation |
+| `POST` | `/api/v1/host/screenings` | Create a screening night |
+| `GET` | `/api/v1/host/screenings/:id` | Fetch a single screening |
+| `PATCH` | `/api/v1/host/screenings/:id` | Update, publish, or postpone |
+| `DELETE` | `/api/v1/host/screenings/:id` | Cancel and delete |
+
+---
+
+## GET /api/v1/host/screenings
+
+List every screening belonging to your organisation. Results include all statuses (draft, published, cancelled).
+
+### Query parameters
+
+<ParamField query="organisationId" type="number">
+  Filter to a specific organisation. Defaults to your primary organisation when omitted.
+</ParamField>
+
+<ParamField query="page" type="number">
+  Page number for pagination, starting at `1`.
+</ParamField>
+
+<ParamField query="limit" type="number">
+  Number of results per page.
+</ParamField>
+
+### Response
+
+```json
+{
+  "screenings": [
+    {
+      "id": 42,
+      "title": "Coastal Light — Opening Night",
+      "slug": "coastal-light-opening-night",
+      "format": "online",
+      "status": "published",
+      "showtimeIso": "2025-09-12T19:30:00.000Z",
+      "eventTimezone": "Europe/London",
+      "pricePence": 800,
+      "currency": "gbp",
+      "isPremiere": true,
+      "filmId": 12
+    }
+  ]
+}
+```
+
+---
+
+## POST /api/v1/host/screenings
+
+Create a new screening night. You need the `canManageCms` capability (host admin) to create screenings.
+
+### Request body
+
+<ParamField body="title" type="string" required>
+  Public-facing title for the screening night. Maximum 200 characters (e.g. "Coastal Light — Opening Night").
+</ParamField>
+
+<ParamField body="showtimeLocal" type="string" required>
+  Local start time in `YYYY-MM-DDTHH:MM` format (no seconds, no timezone offset). Pair with `eventTimezone` so the API can store the correct UTC instant.
+</ParamField>
+
+<ParamField body="pricePounds" type="number" required>
+  Ticket price in pounds (e.g. `8.00`). Use `0` for a free screening. The API converts this to pence internally. Stripe's 5% + 30p platform fee is all-in — card processing is absorbed.
+</ParamField>
+
+<ParamField body="format" type='"online" | "in_person" | "hybrid"' required>
+  Screening format.
+  - `online` — stream only; Mux playback token distributed to ticket holders.
+  - `in_person` — venue only; door check-in enabled.
+  - `hybrid` — both stream and physical venue.
+</ParamField>
+
+<ParamField body="filmId" type="number">
+  ID of the film to attach. When provided, `runtimeMinutes` is inherited from the film record. Either `filmId` or an explicit `runtimeMinutes` must be supplied.
+</ParamField>
+
+<ParamField body="runtimeMinutes" type="number">
+  Override the runtime (in whole minutes, max 1 440). Required when `filmId` is omitted.
+</ParamField>
+
+<ParamField body="subtitle" type="string">
+  Optional subtitle shown below the main title in the booth. Maximum 200 characters.
+</ParamField>
+
+<ParamField body="slug" type="string">
+  URL-safe slug for the screening path (`/{org}/{slug}`). Must be lowercase alphanumeric with hyphens, maximum 80 characters. Auto-generated from the title when omitted.
+</ParamField>
+
+<ParamField body="eventTimezone" type="string">
+  IANA timezone name (e.g. `Europe/London`, `America/New_York`). Defaults to `UTC` when omitted. Required for correct showtime display and reminder email scheduling.
+</ParamField>
+
+<ParamField body="concessionPricePounds" type="number">
+  Optional discounted concession price in pounds. When set, a second ticket tier named "Concession" appears in the booth alongside "Standard".
+</ParamField>
+
+<ParamField body="description" type="string">
+  Rich-text description shown in the ticket booth. Maximum 4 000 characters.
+</ParamField>
+
+<ParamField body="venueName" type="string">
+  Venue name for `in_person` and `hybrid` screenings. Maximum 200 characters.
+</ParamField>
+
+<ParamField body="venueAddress" type="string">
+  Venue address for `in_person` and `hybrid` screenings. Maximum 500 characters.
+</ParamField>
+
+<ParamField body="capacity" type="number">
+  Maximum ticket sales for the event. When the limit is reached, the booth closes automatically. Omit for unlimited capacity.
+</ParamField>
+
+<ParamField body="status" type='"draft" | "published"'>
+  Initial CMS status. Defaults to `"draft"`. Pass `"published"` to open the ticket booth immediately on creation.
+</ParamField>
+
+<ParamField body="isPremiere" type="boolean">
+  Mark this as the opening-night premiere. Only one screening per film can be a premiere. Subsequent screenings should be scheduled as encores.
+</ParamField>
+
+<ParamField body="attestRights" type="boolean">
+  Confirm distribution rights at the screening level. If you already set `attestRights: true` on the film record, this field is optional.
+</ParamField>
+
+<ParamField body="organisationId" type="number">
+  Target organisation. Defaults to your primary organisation.
+</ParamField>
+
+### Response
+
+```json
+{
+  "id": 42,
+  "slug": "coastal-light-opening-night",
+  "title": "Coastal Light — Opening Night",
+  "showtimeLocal": "2025-09-12T19:30",
+  "eventTimezone": "Europe/London",
+  "publicPath": "/screeningco/coastal-light-opening-night",
+  "shortPath": "/s/abc123",
+  "premiereId": 42
+}
+```
+
+---
+
+## CMS status transitions
+
+The lifecycle moves in one direction. Transition by `PATCH`-ing the `status` field.
+
+<Steps>
+  <Step title="Draft">
+    Default on creation. The ticket booth is hidden; no one can purchase. Use this state while you configure booth copy, pricing, and venue details.
+  </Step>
+  <Step title="Published">
+    The booth is open. Buyers can discover and purchase tickets. Plunk sends confirmation emails and schedules 24-hour and 1-hour reminders. Stripe Checkout is active.
+  </Step>
+  <Step title="Cancelled">
+    The booth closes immediately. All ticket holders receive a cancellation email via Plunk. Refunds must be initiated separately through the Studio payout dashboard.
+  </Step>
+</Steps>
+
+<Warning>
+  Moving a screening to `cancelled` is irreversible via the API. Trigger this only after you have confirmed refunds are being handled — cancellation emails go out immediately.
+</Warning>
+
+---
+
+## GET /api/v1/host/screenings/:id
+
+Fetch a single screening by its numeric ID. Returns the full screening record including venue fields, ticket tiers, and short link.
+
+---
+
+## PATCH /api/v1/host/screenings/:id
+
+Update any fields on a screening, or advance its CMS status. All body fields from `POST` are accepted; all are optional.
+
+Common use cases:
+
+- **Publish** — `{ "status": "published" }`
+- **Postpone** — `{ "showtimeLocal": "2025-10-01T19:30", "eventTimezone": "Europe/London" }`
+- **Price change** — `{ "pricePounds": 10.00 }` (updates ticket tiers automatically)
+
+---
+
+## DELETE /api/v1/host/screenings/:id
+
+Cancel and permanently delete the screening. Use `PATCH` to set `status: "cancelled"` if you want to retain the record for reporting purposes.
+
+---
+
+## Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| 400 | `invalid_input` | Validation failed — check title, slug, showtime, runtime, price, and format. |
+| 400 | `premiere_exists` | Another screening for this film is already marked `isPremiere: true`. |
+| 400 | `invalid_input` | `eventTimezone` is not a valid IANA timezone string. |
+| 401 | `unauthorized` | Missing or expired token. |
+| 403 | `forbidden` | Valid token but insufficient permissions. |
+| 404 | `not_found` | Screening ID does not exist or belongs to another organisation. |
+
+---
+
+## Examples
+
+<CodeGroup>
+
+```bash List screenings
+curl 'https://usescreening.com/api/v1/host/screenings?organisationId=3' \
+  -H 'Authorization: Bearer scr_live_…'
+```
+
+```bash Create a screening
+curl -X POST https://usescreening.com/api/v1/host/screenings \
+  -H 'Authorization: Bearer scr_live_…' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "filmId": 12,
+    "title": "Coastal Light — Opening Night",
+    "format": "online",
+    "showtimeLocal": "2025-09-12T19:30",
+    "eventTimezone": "Europe/London",
+    "pricePounds": 8.00,
+    "isPremiere": true,
+    "status": "draft"
+  }'
+```
+
+```bash Publish a screening
+curl -X PATCH https://usescreening.com/api/v1/host/screenings/42 \
+  -H 'Authorization: Bearer scr_live_…' \
+  -H 'Content-Type: application/json' \
+  -d '{"status": "published"}'
+```
+
+</CodeGroup>

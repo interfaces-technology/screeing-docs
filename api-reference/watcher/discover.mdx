@@ -1,0 +1,89 @@
+---
+title: 'GET /api/v1/watcher/discover — Browse Upcoming Screenings'
+sidebarTitle: '/watcher/discover'
+description: 'GET /api/v1/watcher/discover returns a paginated feed of upcoming published screenings — filter by format and search by keyword.'
+---
+
+Browse every publicly listed screening on Screening without any authentication. The discover endpoint powers the `/discover` page and is equally useful for building your own programmatic feed — surface upcoming premieres, filter by format, or drive a search experience for your audience.
+
+Only `published` screenings with `listOnDiscover: true` appear in results. Draft and cancelled screenings are always excluded.
+
+## Request
+
+**Method:** `GET`  
+**URL:** `https://usescreening.com/api/v1/watcher/discover`  
+**Auth:** Optional — pass a watcher device token (`scr_live_*` / `scr_test_*`) or `Authorization: Bearer <jwt>` to personalise results, or call the endpoint unauthenticated for a fully public feed.
+
+### Query Parameters
+
+<ParamField query="q" type="string">
+  Keyword search string, max 120 characters. Matches against screening title,
+  director name, and organisation name.
+</ParamField>
+
+<ParamField query="format" type="'online' | 'in_person' | 'hybrid' | 'all'" default="all">
+  Filter results to a specific screening format. Omit or pass `all` to return
+  screenings of every format.
+</ParamField>
+
+<ParamField query="page" type="number">
+  Page number for pagination. Starts at `1`.
+</ParamField>
+
+<ParamField query="limit" type="number">
+  Number of results to return per page. Server-side maximum applies.
+</ParamField>
+
+## Response
+
+Returns a paginated object containing an array of screening records. Each item shares the same shape as the [booth response](/api-reference/watcher/booth).
+
+```json
+{
+  "screenings": [
+    {
+      "id": 42,
+      "organisationSlug": "nova-films",
+      "slug": "the-still-point",
+      "title": "The Still Point",
+      "subtitle": "A journey to the edge of silence",
+      "description": "A documentary following three climbers...",
+      "showtimeIso": "2025-09-14T19:30:00.000Z",
+      "pricePence": 500,
+      "currency": "gbp",
+      "format": "online",
+      "status": "published",
+      "stillPath": "https://cdn.usescreening.com/stills/the-still-point.jpg",
+      "isPremiere": true
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 84
+  }
+}
+```
+
+## Example
+
+Fetch the first page of online screenings matching the keyword "noir":
+
+```bash
+curl "https://usescreening.com/api/v1/watcher/discover?q=noir&format=online&page=1&limit=20"
+```
+
+With an optional watcher token for personalised ordering:
+
+```bash
+curl "https://usescreening.com/api/v1/watcher/discover?format=hybrid&page=1" \
+  -H "Authorization: Bearer scr_live_..."
+```
+
+## Error Responses
+
+All errors return `{ "code": string, "message": string }`.
+
+| Status | Code | Meaning |
+|--------|------|---------|
+| `400` | `invalid_params` | Query parameters failed validation (e.g. `q` exceeds 120 chars or `format` is not a recognised value). |

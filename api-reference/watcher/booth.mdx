@@ -1,0 +1,122 @@
+---
+title: 'GET /api/v1/watcher/booth/:orgSlug/:screeningSlug — Screening Booth Data'
+sidebarTitle: '/watcher/booth'
+description: 'GET /api/v1/watcher/booth/:orgSlug/:screeningSlug returns public metadata for a published screening — title, showtime, price, format, and premiere status.'
+---
+
+Fetch everything your buyer-facing UI needs to render a screening booth — title, showtime, ticket price, format, and whether it is a world premiere — without any authentication. This endpoint is the canonical data source for the `/{org}/{slug}` booth page and is safe to call from any unauthenticated client.
+
+Draft screenings are deliberately indistinguishable from non-existent ones: both return `404` to prevent accidental previews leaking to the public.
+
+## Request
+
+**Method:** `GET`  
+**URL:** `https://usescreening.com/api/v1/watcher/booth/:orgSlug/:screeningSlug`  
+**Auth:** None — fully public, no credentials required.
+
+### Path Parameters
+
+<ParamField path="orgSlug" type="string" required>
+  The URL slug for the hosting organisation. Between 1 and 80 characters.
+  Matches the `/{org}` segment of the booth URL.
+</ParamField>
+
+<ParamField path="screeningSlug" type="string" required>
+  The URL slug for the specific screening. Between 1 and 80 characters.
+  Matches the `/{slug}` segment of the booth URL.
+</ParamField>
+
+## Response
+
+<ResponseField name="screening" type="object">
+  The public metadata object for the requested screening.
+
+  <Expandable title="screening fields">
+    <ResponseField name="id" type="number">
+      Unique integer ID for the screening.
+    </ResponseField>
+
+    <ResponseField name="organisationSlug" type="string">
+      URL slug of the hosting organisation — matches `orgSlug` in the request path.
+    </ResponseField>
+
+    <ResponseField name="slug" type="string">
+      URL slug of the screening — matches `screeningSlug` in the request path.
+    </ResponseField>
+
+    <ResponseField name="title" type="string">
+      The screening's public title.
+    </ResponseField>
+
+    <ResponseField name="subtitle" type="string">
+      A short supporting line shown beneath the title on the booth page.
+    </ResponseField>
+
+    <ResponseField name="description" type="string | null">
+      Full prose description of the screening. `null` if not set by the host.
+    </ResponseField>
+
+    <ResponseField name="showtimeIso" type="string">
+      ISO 8601 timestamp for the scheduled showtime, e.g. `"2025-09-14T19:30:00.000Z"`.
+    </ResponseField>
+
+    <ResponseField name="pricePence" type="number">
+      Ticket price in the smallest currency unit (pence for GBP). A value of `0`
+      indicates a free screening.
+    </ResponseField>
+
+    <ResponseField name="currency" type="string">
+      ISO 4217 currency code, e.g. `"gbp"`.
+    </ResponseField>
+
+    <ResponseField name="format" type="'online' | 'in_person' | 'hybrid'">
+      Delivery format of the screening.
+    </ResponseField>
+
+    <ResponseField name="status" type="'draft' | 'published' | 'cancelled'">
+      CMS lifecycle status. Only `published` screenings are reachable via this
+      endpoint; `draft` returns `404`.
+    </ResponseField>
+
+    <ResponseField name="stillPath" type="string">
+      Absolute URL of the film still image used as the booth hero.
+    </ResponseField>
+
+    <ResponseField name="isPremiere" type="boolean">
+      `true` if the host has marked this screening as a world premiere.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Example
+
+```bash
+curl https://usescreening.com/api/v1/watcher/booth/nova-films/the-still-point
+```
+
+```json
+{
+  "screening": {
+    "id": 42,
+    "organisationSlug": "nova-films",
+    "slug": "the-still-point",
+    "title": "The Still Point",
+    "subtitle": "A journey to the edge of silence",
+    "description": "A documentary following three climbers at the edge of the world.",
+    "showtimeIso": "2025-09-14T19:30:00.000Z",
+    "pricePence": 500,
+    "currency": "gbp",
+    "format": "online",
+    "status": "published",
+    "stillPath": "https://cdn.usescreening.com/stills/the-still-point.jpg",
+    "isPremiere": true
+  }
+}
+```
+
+## Error Responses
+
+| Status | Code | Meaning |
+|--------|------|---------|
+| `400` | `invalid_params` | Path parameters failed validation (e.g. a slug exceeds 80 characters). |
+| `404` | `not_found` | The screening does not exist or is in `draft` status. |

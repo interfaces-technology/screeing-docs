@@ -1,0 +1,108 @@
+---
+title: 'POST /api/v1/auth/refresh — Rotate Device Tokens'
+sidebarTitle: '/auth/refresh'
+description: 'POST /api/v1/auth/refresh rotates both the access token and refresh token. The previous refresh token is immediately invalidated.'
+---
+
+Call this endpoint to rotate your device token pair before or after the access token expires. Both the access token and the refresh token are replaced in a single operation, and the previous refresh token is invalidated immediately. Store the new pair before making any further API calls.
+
+**Method:** `POST`  
+**URL:** `/api/v1/auth/refresh`  
+**Auth required:** None (pass `refreshToken` in the request body)  
+**Rate limit:** 30 requests per minute per IP
+
+## Request body
+
+<ParamField body="refreshToken" type="string" required>
+  Your current refresh token. Must start with `scr_rt_live_…` (production) or `scr_rt_test_…` (preview/dev). Minimum 16 characters, maximum 512 characters.
+</ParamField>
+
+## Response
+
+A successful `200` response returns the newly rotated token pair with updated expiry timestamps.
+
+<ResponseField name="accessToken" type="string">
+  The new access token. Prefixed `scr_live_…` or `scr_test_…`. Valid for 24 hours from rotation.
+</ResponseField>
+
+<ResponseField name="refreshToken" type="string">
+  The new refresh token. Prefixed `scr_rt_live_…` or `scr_rt_test_…`. Valid for 30 days from rotation.
+</ResponseField>
+
+<ResponseField name="accessTokenPrefix" type="string">
+  The first characters of the new access token for display and identification purposes.
+</ResponseField>
+
+<ResponseField name="accessExpiresAt" type="string">
+  ISO 8601 timestamp of when the new access token expires.
+</ResponseField>
+
+<ResponseField name="refreshExpiresAt" type="string">
+  ISO 8601 timestamp of when the new refresh token expires.
+</ResponseField>
+
+<ResponseField name="persona" type="string">
+  The persona scope of this token pair — `host` or `watcher`. Unchanged from mint.
+</ResponseField>
+
+## Error codes
+
+| HTTP status | Code | Description |
+|-------------|------|-------------|
+| `400` | `invalid_json` | The request body is not valid JSON |
+| `400` | `invalid_body` | The `refreshToken` field is missing or malformed |
+| `401` | `invalid_token` | The refresh token is invalid, expired, or has already been used |
+| `429` | `rate_limited` | Too many requests from this IP — wait before retrying |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://usescreening.com/api/v1/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{
+    "refreshToken": "scr_rt_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  }'
+```
+
+```typescript TypeScript
+const res = await fetch('https://usescreening.com/api/v1/auth/refresh', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ refreshToken: storedRefreshToken }),
+});
+
+if (!res.ok) {
+  const { code, message } = await res.json();
+  // 401 invalid_token — sign in again via /api/v1/auth/token
+  throw new Error(`${code}: ${message}`);
+}
+
+const { accessToken, refreshToken, accessExpiresAt } = await res.json();
+// Replace both stored tokens atomically
+```
+
+</CodeGroup>
+
+**Example response:**
+
+```json
+{
+  "accessToken": "scr_live_yyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+  "refreshToken": "scr_rt_live_yyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+  "accessTokenPrefix": "scr_live_yyyy",
+  "accessExpiresAt": "2025-01-17T12:00:00.000Z",
+  "refreshExpiresAt": "2025-02-16T12:00:00.000Z",
+  "persona": "watcher"
+}
+```
+
+<Warning>
+  Refresh tokens are **single-use**. The moment you call this endpoint, the token you passed in is invalidated. Store the new pair atomically before making any other requests — if two concurrent processes attempt to refresh the same token, the second will receive `401 invalid_token`.
+</Warning>
+
+<Note>
+  Your access token has a 24-hour TTL. Check `accessExpiresAt` and proactively refresh before expiry to avoid interrupting your integration. A good strategy is to refresh when less than 5 minutes remain.
+</Note>

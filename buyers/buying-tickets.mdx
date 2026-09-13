@@ -1,0 +1,74 @@
+---
+title: "How to Buy a Ticket for a Screening"
+sidebarTitle: "Buy Tickets"
+description: "Purchase a ticket for an online, in-person, or hybrid screening via Stripe Checkout — no account required, just your email and a card."
+---
+
+Buying a ticket on Screening takes under two minutes. You land on the screening booth, choose your ticket, pay through Stripe, and receive a confirmation email with everything you need — your ticket code, QR (for in-person nights), and a link to watch online. There's no account to create and no app to download.
+
+## The Booth Page
+
+Every screening lives at its own booth: `usescreening.com/{org}/{slug}`. The booth shows you everything you need to decide:
+
+- **Film poster and title** — the night at a glance
+- **Showtime and timezone** — when the window opens
+- **Format** — online, in-person, or hybrid
+- **Ticket price and available tiers** — Standard and Concession pricing (set by the filmmaker)
+- **Buy button** — opens Stripe Checkout
+
+## The Purchase Flow
+
+<Steps>
+  <Step title="Open the booth">
+    Navigate to the screening's booth URL — either from the [Discover feed](https://usescreening.com/discover), an organisation page, or a direct link the filmmaker shared.
+  </Step>
+  <Step title="Choose your ticket tier">
+    Select **Standard** or **Concession** (if the filmmaker has enabled a concession price). The filmmaker sets both prices. If you qualify for a concession rate, select it at this step.
+  </Step>
+  <Step title="Select your attendance mode (hybrid only)">
+    On hybrid screenings, choose whether you want to attend **online** or **in person** before proceeding to checkout. This choice determines your ticket type: a stream link for online, a QR code for in-person. You cannot switch modes after payment.
+  </Step>
+  <Step title="Complete Stripe Checkout">
+    You'll be taken to a Stripe-hosted checkout page. Enter your **email address** and **card details**. Your ticket is tied to the email you enter here — use an address you check regularly, as your confirmation and reminder emails go to it. Screening accepts cards only; BNPL options such as Klarna are not available.
+  </Step>
+  <Step title="Return to the thanks page">
+    After a successful payment, Stripe redirects you back to Screening's thanks page. You'll see your ticket code and, for in-person tickets, your QR code. From here you can also add the screening to your calendar.
+  </Step>
+  <Step title="Check your confirmation email">
+    A confirmation email arrives within a few minutes. It contains your ticket code, QR code (in-person), the stream link (online/hybrid-online), and a link to your ticket at [/me](https://usescreening.com/me). You'll also receive reminder emails 24 hours and 1 hour before the screening starts.
+  </Step>
+</Steps>
+
+## Ticket Tiers
+
+Filmmakers can offer up to two price tiers for a screening:
+
+| Tier | What it is |
+|------|-----------|
+| **Standard** | Full-price ticket — the default for all buyers |
+| **Concession** | Reduced price for eligible buyers (students, unwaged, etc.) — set and honoured at the filmmaker's discretion |
+
+Both tiers give you the same access — the same stream or the same door entry.
+
+## Hybrid Screenings
+
+When a screening is marked **hybrid**, one night runs simultaneously in a physical venue and online. At checkout you choose your mode:
+
+- **Online** — you receive a stream link valid during the live window
+- **In person** — you receive a QR code and ticket code for door entry; you do not get stream access
+
+Make sure you pick the right mode before confirming payment — attendance mode cannot be changed after purchase.
+
+## Payment and Currency
+
+Screening uses **Stripe Checkout** for all payments. A few things to know:
+
+- **Cards only** — Visa, Mastercard, Amex, and most debit cards are accepted. BNPL services (Klarna, Clearpay, etc.) are not available.
+- **GBP-first** — most screenings are priced in British pounds. Foreign-issued cards are accepted; your bank may apply a currency conversion fee.
+- **Platform fee** — Screening's 5% + 30p fee is built into the checkout total. The price you see is the price you pay.
+
+## All Sales Are Final
+
+<Note>
+  Screening operates an **all-sales-final** policy — there is no in-app refund button for buyers or filmmakers. If a screening is postponed, the filmmaker will notify you by email. If a screening is cancelled, contact the filmmaker directly or reach out to [Screening support](https://usescreening.com) for help with your order. Disputes can also be raised through your card provider.
+</Note>

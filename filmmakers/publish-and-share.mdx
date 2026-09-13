@@ -1,0 +1,118 @@
+---
+title: 'Publish, Share, and Manage Your Screening'
+sidebarTitle: 'Publish & Share'
+description: Publish your screening to open ticket sales, share your booth link, and manage the lifecycle — postpone, cancel, and monitor sales.
+---
+
+Publishing a screening opens your booth and enables Stripe Checkout so buyers can purchase tickets. Before you publish, work through the checklist below to make sure everything is in place. Once you're live, use the share kit to spread the word — then monitor sales from Studio as they come in.
+
+## Pre-publish checklist
+
+Run through these checks in Studio before clicking Publish:
+
+<CardGroup cols={2}>
+  <Card title="Stream file ready" icon="video">
+    Required for **online** and **hybrid** screenings. The film must be uploaded and fully processed by Mux. Studio shows the status on the film record.
+  </Card>
+  <Card title="Rights attested" icon="file-signature">
+    You must confirm on the film record that you hold the rights to distribute this film. Screening prompts you at publish if this hasn't been ticked.
+  </Card>
+  <Card title="Stripe connected" icon="credit-card">
+    Go to **Studio → Money** and confirm that your Stripe Express account is connected and active. Sales cannot open without this.
+  </Card>
+  <Card title="Start time set" icon="clock">
+    Your screening must have a date and start time. Without one, Screening cannot calculate the live window or send reminder emails.
+  </Card>
+</CardGroup>
+
+<Note>
+  For **in-person** and **hybrid** screenings, you also need a venue name and address before you can publish. Buyers see these on the booth and in their confirmation emails.
+</Note>
+
+## Publish a screening
+
+<Steps>
+  <Step title="Open the screening">
+    In **Studio → Nights**, click the screening you want to publish.
+  </Step>
+  <Step title="Review the checklist">
+    Studio surfaces any blocking issues at the top of the screening detail page. Resolve them before proceeding.
+  </Step>
+  <Step title="Click Publish">
+    Click the **Publish** button. Screening opens the booth at `usescreening.com/{org}/{slug}`, enables Stripe Checkout, and marks the screening as Published.
+  </Step>
+  <Step title="Share your booth">
+    Use the share kit (see below) to send your booth link to your audience and post it on social media.
+  </Step>
+</Steps>
+
+## Booth URL formats
+
+| Format | URL | When to use |
+|--------|-----|------------|
+| **Primary booth** | `usescreening.com/{org}/{slug}` | Your canonical link — use this everywhere you can |
+| **Short link** | `usescreening.com/r/{code}` | Social posts, printed materials, anywhere character count matters |
+| **Legacy link** | `usescreening.com/s/{slug}` | Old links — still redirect to the primary booth |
+
+## Share kit
+
+Access the share kit from the night detail page in Studio. All assets update automatically when you change the screening details.
+
+<CardGroup cols={2}>
+  <Card title="Booth link" icon="link">
+    Copy the primary booth URL to paste into emails, newsletters, or anywhere you drive traffic.
+  </Card>
+  <Card title="QR code" icon="qrcode">
+    Download a QR image that links to your booth. Print it on posters, flyers, or use it in slide decks at festivals.
+  </Card>
+  <Card title="Invite text" icon="pen">
+    Pre-written copy you can drop straight into a social post, group chat, or press release.
+  </Card>
+  <Card title="Calendar file" icon="calendar">
+    A `.ics` file your audience can add to any calendar app — includes title, time, and your booth URL.
+  </Card>
+</CardGroup>
+
+## Automatic reminder emails
+
+Screening sends reminder emails to all ticket holders automatically — you don't need to schedule them manually.
+
+| Reminder | Sent |
+|----------|------|
+| **24-hour reminder** | 24 hours before the screening start time |
+| **1-hour reminder** | 1 hour before the screening start time |
+
+Reminder emails include the ticket code or QR (for in-person/hybrid) and the stream link (for online/hybrid).
+
+## Managing the screening lifecycle
+
+### Unpublish
+
+Returns the screening to Draft status. The booth switches back to Coming Soon and ticket sales pause. Existing tickets are unaffected. Use this if you need to make significant changes before re-publishing.
+
+### Postpone
+
+Sets a new start time and sends an email to all existing ticket holders notifying them of the change. The booth updates automatically with the new date and time.
+
+### Cancel
+
+<Warning>
+  Cancellations are final. Clicking Cancel closes the booth permanently, sets the screening status to Cancelled, and sends a cancellation email to all ticket holders. There is no host refund interface in Screening — all ticket sales are final. If a buyer raises a dispute, handle it through the [Stripe Dashboard](https://dashboard.stripe.com) directly.
+</Warning>
+
+| Action | Booth | Emails sent | Reversible |
+|--------|-------|------------|-----------|
+| **Unpublish** | Coming Soon | None | Yes — re-publish at any time |
+| **Postpone** | Updated showtime | Postponement email to all ticket holders | Yes — postpone again if needed |
+| **Cancel** | Closed | Cancellation email to all ticket holders | No |
+
+## Monitoring sales
+
+Go to **Studio → Money** to see live data for any published screening:
+
+- Total ticket count and revenue
+- Breakdown by ticket tier (Standard vs Concession)
+- On-demand revenue (rent/buy) attached to this film
+- Payout history and next expected payout date
+
+Sales figures update in real time as Stripe confirms each payment.

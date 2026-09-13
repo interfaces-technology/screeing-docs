@@ -1,0 +1,83 @@
+---
+title: 'GET /api/v1/host/account/bootstrap — Load Host Workspace'
+sidebarTitle: '/host/bootstrap'
+description: 'GET /api/v1/host/account/bootstrap returns the full Studio workspace data for the authenticated host — organisation, films, screenings, and Stripe status.'
+---
+
+Use this endpoint to hydrate the entire filmmaker workspace in one round trip. Studio calls it on every page load to populate your organisation details, film catalogue, active and upcoming screenings, and Stripe Connect readiness — so you should treat the response as the canonical source of truth for your host UI state.
+
+## Endpoint
+
+```
+GET /api/v1/host/account/bootstrap
+```
+
+## Authentication
+
+Supply a `host`-persona device token as a Bearer credential, or rely on the HttpOnly cookie session set by the Studio web login. API clients should always use a device token.
+
+| Method | Header |
+|--------|--------|
+| Device token | `Authorization: Bearer scr_live_…` |
+| Web session | HttpOnly cookie (browser only) |
+
+<Info>
+  Device tokens are scoped to a persona at mint time. A token minted with the `watcher` persona will be rejected — make sure you mint with `host`.
+</Info>
+
+## Response
+
+A successful response returns HTTP `200` with a single `bootstrap` object. The object is intentionally opaque in the contract (`z.unknown()`) because its shape is owned by the Studio front end and may evolve between releases. Treat all fields as unstable unless documented separately.
+
+```json
+{
+  "bootstrap": {
+    "kind": "authenticated",
+    "organisation": { ... },
+    "films": [ ... ],
+    "screenings": [ ... ],
+    "connect": { ... },
+    "team": [ ... ]
+  }
+}
+```
+
+<ResponseField name="bootstrap" type="object" required>
+  The full Studio workspace payload. Top-level fields vary by release; the `kind` discriminant is always present.
+
+  <Expandable title="Stable discriminants">
+    <ResponseField name="bootstrap.kind" type='"authenticated" | "unauthenticated"'>
+      Always `"authenticated"` for a successful 200 response. If auth fails the endpoint returns 401 rather than a 200 with `"unauthenticated"`.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| 401 | `unauthenticated` | No valid session or token. Sign in and retry. |
+| 403 | `forbidden` | Token is valid but does not carry the `host` persona. |
+| 500 | `bootstrap_failed` | Server-side error loading Studio data. |
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET https://usescreening.com/api/v1/host/account/bootstrap \
+  -H 'Authorization: Bearer scr_live_…'
+```
+
+```typescript TypeScript
+const res = await fetch('https://usescreening.com/api/v1/host/account/bootstrap', {
+  headers: { Authorization: 'Bearer scr_live_…' },
+});
+const { bootstrap } = await res.json();
+```
+
+</CodeGroup>
+
+<Note>
+  This endpoint is marked `force-dynamic` — responses are never cached. Every call reflects the current state of your workspace, including any changes made in Studio moments before.
+</Note>

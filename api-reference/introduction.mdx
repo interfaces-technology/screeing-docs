@@ -1,0 +1,123 @@
+---
+title: 'Screening API v1 Reference'
+sidebarTitle: 'Introduction'
+description: 'The Screening HTTP API v1 provides host and watcher endpoints for building on top of Screening — list films, manage screenings, stream access, and more.'
+---
+
+The Screening API v1 is a versioned HTTP API that lets you build integrations on top of the Screening platform. Two persona namespaces give you access to every capability: `host` for filmmaker operations (managing films, screenings, and door check-in) and `watcher` for buyer operations (browsing, checkout, and stream access). All request and response schemas are typed Zod contracts from the `@screening/api-contracts` package, and every error returns a consistent JSON envelope so you can handle failures predictably.
+
+## Base URLs
+
+| Surface | Production URL | Purpose |
+|---------|---------------|---------|
+| Marketing / primary | `https://usescreening.com` | Auth routes and shared endpoints |
+| Host | `https://host.usescreening.com` | Filmmaker (Studio) surface |
+| Watcher | `https://watch.usescreening.com` | Buyer-facing surface |
+
+Preview equivalents: `host.preview.usescreening.com`, `watch.preview.usescreening.com`, and `preview.usescreening.com`. All `/api/v1/*` routes are served from the primary deploy regardless of which surface subdomain you hit.
+
+## Persona namespaces
+
+The API is split into two persona namespaces. Your device token is scoped to exactly one persona at mint time, and that scope is enforced on every v1 route.
+
+<CardGroup cols={2}>
+  <Card title="Host — /api/v1/host/*" icon="clapperboard">
+    Filmmaker endpoints for managing films, screenings, Stripe Connect status, and door check-in. Access is **invite-only** — your account must be granted host permission before you can mint a `host`-scoped token.
+  </Card>
+  <Card title="Watcher — /api/v1/watcher/*" icon="ticket">
+    Buyer-facing endpoints for discovering screenings, viewing booth pages, checking out, and accessing streams. Open to any registered watcher account.
+  </Card>
+</CardGroup>
+
+## Authentication overview
+
+The API supports two authentication mechanisms depending on your client type.
+
+| Client | Mechanism | How to pass |
+|--------|-----------|-------------|
+| **Web / browser** | HttpOnly cookie session from `/api/auth/*` (Better Auth) | Set automatically — no header needed |
+| **Native / API client** | Device token pair from `POST /api/v1/auth/token`, or short-lived JWT from `POST /api/v1/auth/exchange` | `Authorization: Bearer <token>` |
+| **Playback** | Ticket session UUID (stream-only) | `Authorization: Bearer` on `/api/v1/watcher/stream` |
+
+See the [Authentication guide](/api-reference/authentication) for the full token lifecycle.
+
+## Route index
+
+### Auth — `/api/v1/auth/*`
+
+| Route | Method(s) | Purpose |
+|-------|-----------|---------|
+| `/api/v1/auth/token` | POST | Email/password sign-in → mint device token pair |
+| `/api/v1/auth/refresh` | POST | Rotate access + refresh tokens |
+| `/api/v1/auth/exchange` | POST | Mint short-lived JWT (~15 min) from refresh token or cookie session |
+| `/api/v1/auth/devices` | GET | List active devices (web cookie session required) |
+| `/api/v1/auth/revoke` | POST | Revoke one device token |
+| `/api/v1/auth/revoke-all` | POST | Revoke all device tokens (web cookie session required) |
+
+### Host — `/api/v1/host/*`
+
+| Route | Method(s) | Purpose |
+|-------|-----------|---------|
+| `/api/v1/host/account/bootstrap` | GET | Fetch full Studio bootstrap data |
+| `/api/v1/host/films` | GET, POST | List and create films |
+| `/api/v1/host/films/:id` | GET, PATCH, DELETE | Read, update, or delete a single film |
+| `/api/v1/host/screenings` | GET, POST | List and create screenings |
+| `/api/v1/host/screenings/:id` | GET, PATCH, DELETE | Read, update, or delete a single screening |
+| `/api/v1/host/door/check-in` | GET, POST | List and process door check-ins |
+| `/api/v1/host/connect/status` | GET | Stripe Connect onboarding status |
+
+### Watcher — `/api/v1/watcher/*`
+
+| Route | Method(s) | Purpose |
+|-------|-----------|---------|
+| `/api/v1/watcher/discover` | GET | Browse published screenings |
+| `/api/v1/watcher/booth/:orgSlug/:screeningSlug` | GET | Booth page data for a single screening |
+| `/api/v1/watcher/checkout/return` | GET | Stripe checkout return handler |
+| `/api/v1/watcher/me` | GET | Current watcher session and ticket list |
+| `/api/v1/watcher/access` | POST | Validate access and issue a playback ticket |
+| `/api/v1/watcher/stream` | POST | Mint a signed Mux playback token |
+
+## Validation
+
+Every route validates its request body against a Zod schema from `@screening/api-contracts`. If validation fails you receive a `400 invalid_body` response. You can import and reuse the same schemas in your own TypeScript code:
+
+```typescript
+import { authTokenBodySchema, authTokenResponseSchema } from '@screening/api-contracts';
+```
+
+## Error format
+
+All error responses use a consistent JSON envelope regardless of status code.
+
+```json
+{
+  "code": "invalid_credentials",
+  "message": "Invalid email or password."
+}
+```
+
+Common HTTP status codes:
+
+| Status | Meaning |
+|--------|---------|
+| `400` | Bad request — invalid body, missing field, or malformed JSON |
+| `401` | Unauthenticated — missing, expired, or invalid token |
+| `403` | Forbidden — authenticated but not authorised (e.g. host access invite-only) |
+| `404` | Resource not found |
+| `429` | Rate limited — back off and retry after a short delay |
+| `503` | Service unavailable — auth not configured on this deployment |
+
+## Rate limiting
+
+Auth endpoints are rate-limited per IP. When you receive a `429 rate_limited` response, wait before retrying — the limits are generous for normal use:
+
+| Endpoint | Limit |
+|----------|-------|
+| `/api/v1/auth/token` | 10 req / min |
+| `/api/v1/auth/refresh` | 30 req / min |
+| `/api/v1/auth/exchange` | 10 req / min |
+| `/api/v1/auth/revoke` | 20 req / min |
+
+<Note>
+  Legacy `/api/*` routes remain active during migration. Responses from those routes may include a `Deprecation: true` header and a `Link` header pointing to the successor v1 route. Migrate to `/api/v1/*` endpoints at your earliest convenience.
+</Note>

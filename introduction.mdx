@@ -1,0 +1,94 @@
+---
+title: 'Screening: Independent Film Infrastructure'
+sidebarTitle: 'Introduction'
+description: 'Screening is ticketing, live streaming, and on-demand distribution for independent filmmakers — direct payouts via Stripe, no distributor needed.'
+---
+
+Screening is film infrastructure for independent filmmakers. It lets you premiere your film to the world — in a room, online, or both at the same time — and keep the same film available to rent or buy long after the night ends. Buyers pay you directly through Stripe. Screening handles ticketing, live streaming, email reminders, and on-demand access in one flow, so you can self-release without a distributor, a cinema deal, or a patchwork of separate tools.
+
+## The two products
+
+Every filmmaker on Screening gets access to two complementary products that together replace the distributor's job for a self-releasing indie: launch with an event, then keep earning after the credits roll.
+
+| Product | What it is | Who pays |
+|---|---|---|
+| **Screening night** | A ticketed event — online, in-person, or hybrid | Ticket buyer at checkout |
+| **On-demand** | Rent (timed) or buy (keep) the film on its catalogue page | Catalogue buyer at any time |
+
+Both products run on the same payout rails and the same playback protection. A premiere is simply a screening night marked as opening night — it is a label, not a separate product.
+
+## Who uses Screening
+
+<CardGroup cols={2}>
+  <Card title="Filmmaker / host" icon="clapperboard">
+    Request access, connect a bank account via Stripe, add films, schedule nights, and get paid directly. Manage everything from **Studio** at `/account`.
+  </Card>
+  <Card title="Buyer / fan" icon="ticket">
+    Discover a night or follow a shared link, buy a ticket at the booth, watch online or show a QR code at the door. No account required to purchase.
+  </Card>
+  <Card title="Door staff" icon="door-open">
+    Check guests in on the web using a ticket code or QR scan. The door role sees a focused check-in view — no access to the full CMS.
+  </Card>
+  <Card title="Platform ops" icon="shield-check">
+    Internal-only. Approves host access requests, monitors sales, sets fees, and handles trust and safety. Never visible to filmmakers or buyers.
+  </Card>
+</CardGroup>
+
+## The hybrid premiere model
+
+Most tools force a choice: cinema *or* stream. Screening treats one night as three audiences at once. When you schedule a **hybrid** screening, buyers choose at checkout whether they're attending in person or watching online — one showtime, two ways to attend, one set of sales.
+
+| Format | Room | Online | Typical use |
+|---|---|---|---|
+| `online` | — | ✓ | Remote premieres, diaspora audiences, global day-one |
+| `in_person` | ✓ | — | Venue nights, community screenings, pop-ups |
+| `hybrid` | ✓ | ✓ | Red carpet in the room, premiere everywhere else |
+
+The in-person QR code does not unlock the stream, and the stream link does not replace the door. Each format is independently gated.
+
+## How money flows
+
+Buyers pay you — the filmmaker — not Screening. You are the merchant of record via **Stripe Connect Express**. Screening applies a platform fee at checkout and passes the rest directly to your connected Stripe account.
+
+<Note>
+  **The fee is 5% + 30p per paid ticket, all-in.** Card processing is absorbed inside that rate — there is no separate Stripe fee on top for standard sales. Free tickets collect no fee at all.
+
+  On a **£10 ticket**: buyer pays £10 → Screening takes 80p → you receive £9.20.
+</Note>
+
+There is no monthly subscription on the Free tier. You only pay when you sell a ticket. Platform admins can waive the Screening cut for an organisation or a specific night where appropriate.
+
+See [Pricing](/pricing) for the full fee breakdown and worked examples.
+
+## Get started
+
+<CardGroup cols={2}>
+  <Card title="Request host access" icon="film" href="/filmmakers/request-access">
+    Hosting is invite-only. Request access at usescreening.com/host and we'll review your application.
+  </Card>
+  <Card title="Finding screenings" icon="magnifying-glass" href="/buyers/finding-screenings">
+    Discover upcoming nights on Screening, or follow a link shared by a filmmaker you love.
+  </Card>
+</CardGroup>
+
+## What Screening is not
+
+Screening has deliberate scope. Understanding what falls outside it helps set the right expectations before you build your release strategy around it.
+
+<AccordionGroup>
+  <Accordion title="Not Eventbrite for any event">
+    Screening is for independent film only — features, documentaries, shorts, and series. It is not a general-purpose ticketing platform for conferences, gigs, or other live events.
+  </Accordion>
+  <Accordion title="Not a streaming service">
+    Screening does not programme a Netflix-style homepage of other people's films, offer a cross-filmmaker bundle, or run a viewer subscription. Every film lives on its own booth under the filmmaker's organisation.
+  </Accordion>
+  <Accordion title="Not open self-serve hosting">
+    Hosting is invite-only. You request access and Screening reviews your application. This keeps quality high and support manageable during the current phase.
+  </Accordion>
+  <Accordion title="Not a refund platform">
+    All sales are final in v1 — there is no in-app refund button for hosts. Chargebacks and exceptional cases are handled outside the platform via Stripe directly.
+  </Accordion>
+  <Accordion title="Not a festival operating system">
+    Screening does not manage submissions, jury deliberations, award ceremonies, or multi-programmer curation. It is infrastructure for distribution, not festival operations.
+  </Accordion>
+</AccordionGroup>

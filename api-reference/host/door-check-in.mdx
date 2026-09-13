@@ -1,0 +1,144 @@
+---
+title: 'Host Door Check-In API — Verify Tickets at the Door'
+sidebarTitle: '/host/door/check-in'
+description: 'GET and POST /api/v1/host/door/check-in to list and admit ticket holders at the venue door for in-person and hybrid screenings.'
+---
+
+The door check-in endpoints power the front-of-house flow for `in_person` and `hybrid` screenings. Use `GET` to pre-load the full guest list before doors open, and `POST` to admit each ticket holder as they arrive — either by scanning their ticket code from the confirmation email or by looking up their internal ticket ID. Both calls require a valid host-persona token, but you can assign door staff a role that limits them to these endpoints only.
+
+<Note>
+  Assign door staff the `door` role rather than `admin`. The `door` role grants access to check-in endpoints only — door staff cannot view CMS settings, financial data, or other screenings in your Studio workspace.
+</Note>
+
+## Endpoints at a glance
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/api/v1/host/door/check-in` | Pre-load the guest list for a screening |
+| `POST` | `/api/v1/host/door/check-in` | Admit a ticket holder |
+
+---
+
+## GET /api/v1/host/door/check-in
+
+Retrieve the full ticket list for a screening night, along with live check-in statistics. Call this when doors open to pre-load all expected guests on a tablet or front-of-house device.
+
+### Query parameters
+
+<ParamField query="screeningId" type="number" required>
+  The numeric ID of the screening to load check-in data for.
+</ParamField>
+
+<ParamField query="q" type="string">
+  Optional search string to filter the ticket list by buyer name or email. Maximum 200 characters. Useful for locating a specific guest without scrolling the full list.
+</ParamField>
+
+### Response
+
+```json
+{
+  "tickets": [
+    {
+      "id": 801,
+      "ticketCode": "SCR-ABCD1234",
+      "buyerName": "Jordan Ellis",
+      "buyerEmail": "jordan@example.com",
+      "checkedIn": false,
+      "checkedInAt": null,
+      "tierName": "Standard"
+    }
+  ],
+  "stats": {
+    "total": 120,
+    "checkedIn": 47,
+    "remaining": 73
+  }
+}
+```
+
+---
+
+## POST /api/v1/host/door/check-in
+
+Admit a single ticket holder. Supply either `ticketCode` (the alphanumeric code printed in the buyer's confirmation email) or `ticketId` (the internal numeric ID). Ticket codes are the most common workflow — buyers can show the code on their phone or printed confirmation.
+
+### Request body
+
+<ParamField body="screeningId" type="number" required>
+  The numeric ID of the screening this check-in is for. Must be a positive integer.
+</ParamField>
+
+<ParamField body="ticketCode" type="string">
+  The ticket code from the buyer's confirmation email (e.g. `SCR-ABCD1234`). Between 3 and 64 characters. Either `ticketCode` or `ticketId` must be provided.
+</ParamField>
+
+<ParamField body="ticketId" type="number">
+  The internal numeric ticket ID. Either `ticketId` or `ticketCode` must be provided.
+</ParamField>
+
+### Response
+
+Returns the updated ticket object with admission status and buyer details.
+
+```json
+{
+  "ticket": {
+    "id": 801,
+    "ticketCode": "SCR-ABCD1234",
+    "buyerName": "Jordan Ellis",
+    "buyerEmail": "jordan@example.com",
+    "checkedIn": true,
+    "checkedInAt": "2025-09-12T18:47:03.000Z",
+    "tierName": "Standard",
+    "screeningId": 42
+  }
+}
+```
+
+---
+
+## Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| 400 | `invalid_input` | Neither `ticketId` nor `ticketCode` was provided, or the body is malformed. |
+| 400 | `check_in_failed` | The ticket was found but cannot be admitted — for example it was already checked in or belongs to a different screening. The `message` field explains the reason. |
+| 401 | `unauthorized` | Missing or expired token. |
+| 403 | `forbidden` | Token does not have access to this screening (wrong organisation or insufficient role). |
+| 404 | `not_found` | No ticket matching the supplied `ticketCode` or `ticketId` was found for this screening. |
+
+---
+
+## Example
+
+```bash Admit by ticket code
+curl -X POST https://usescreening.com/api/v1/host/door/check-in \
+  -H 'Authorization: Bearer scr_live_…' \
+  -H 'Content-Type: application/json' \
+  -d '{"screeningId": 42, "ticketCode": "SCR-ABCD1234"}'
+```
+
+<CodeGroup>
+
+```bash Pre-load guest list
+curl 'https://usescreening.com/api/v1/host/door/check-in?screeningId=42' \
+  -H 'Authorization: Bearer scr_live_…'
+```
+
+```bash Search guest list
+curl 'https://usescreening.com/api/v1/host/door/check-in?screeningId=42&q=jordan' \
+  -H 'Authorization: Bearer scr_live_…'
+```
+
+```bash Admit by ticket ID
+curl -X POST https://usescreening.com/api/v1/host/door/check-in \
+  -H 'Authorization: Bearer scr_live_…' \
+  -H 'Content-Type: application/json' \
+  -d '{"screeningId": 42, "ticketId": 801}'
+```
+
+</CodeGroup>
+
+<Tip>
+  For busy in-person events, pre-load the guest list with `GET` when doors open and cache it on the device. Then use `POST` to admit arrivals — this keeps check-in snappy even on patchy venue Wi-Fi.
+</Tip>

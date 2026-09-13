@@ -1,0 +1,186 @@
+---
+title: 'Host Films API — List, Create, Update, Delete'
+sidebarTitle: '/host/films'
+description: 'GET and POST /api/v1/host/films to list and create films. Use /host/films/:id for PATCH and DELETE operations on individual film records.'
+---
+
+Films are the core catalogue objects in your Studio workspace. Every screening night is attached to a film, and the film record holds the metadata — title, director, runtime, poster, and rights attestation — that flows through to the ticket booth, Stripe Checkout, and confirmation emails. Manage your film catalogue here before scheduling any screening nights.
+
+## Endpoints at a glance
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/api/v1/host/films` | List all films for your organisation |
+| `POST` | `/api/v1/host/films` | Create a new film |
+| `GET` | `/api/v1/host/films/:id` | Fetch a single film |
+| `PATCH` | `/api/v1/host/films/:id` | Update a film |
+| `DELETE` | `/api/v1/host/films/:id` | Delete a film |
+
+---
+
+## GET /api/v1/host/films
+
+List every film belonging to your organisation. Pass `organisationId` to scope to a specific organisation if your account manages more than one.
+
+### Query parameters
+
+<ParamField query="organisationId" type="number">
+  Filter results to a specific organisation. Defaults to your primary organisation when omitted.
+</ParamField>
+
+### Response
+
+```json
+{
+  "films": [
+    {
+      "id": 12,
+      "title": "Coastal Light",
+      "director": "Amara Osei",
+      "year": 2024,
+      "runtimeMinutes": 94,
+      "posterUrl": "https://cdn.example.com/coastal-light-poster.jpg",
+      "stillUrl": null,
+      "attestRights": true,
+      "organisationId": 3
+    }
+  ]
+}
+```
+
+---
+
+## POST /api/v1/host/films
+
+Create a new film record. You need the `canManageCms` capability (host admin) to create films — door-only staff cannot call this endpoint.
+
+### Request body
+
+<ParamField body="title" type="string" required>
+  Film title. Maximum 200 characters, whitespace is trimmed.
+</ParamField>
+
+<ParamField body="runtimeMinutes" type="number" required>
+  Film runtime in whole minutes. Must be a positive integer, maximum 1 440 (24 hours). The runtime directly affects the stream window end time for online screenings — Mux playback tokens expire shortly after this window closes.
+</ParamField>
+
+<ParamField body="director" type="string">
+  Director name. Maximum 200 characters.
+</ParamField>
+
+<ParamField body="year" type="number">
+  Release year as a four-digit integer between 1888 and 2100.
+</ParamField>
+
+<ParamField body="posterUrl" type="string">
+  Publicly accessible URL for the poster image. Displayed in the ticket booth and on the discover page. Maximum 2 000 characters.
+</ParamField>
+
+<ParamField body="stillUrl" type="string">
+  Publicly accessible URL for a film still. Used as the product image in the Stripe Checkout session. Maximum 2 000 characters.
+</ParamField>
+
+<ParamField body="attestRights" type="boolean">
+  Set to `true` to confirm you hold the necessary distribution rights for this film. **This field must be `true` before you can publish an `online` or `hybrid` screening attached to this film.** You are the merchant of record; Screening cannot verify rights on your behalf.
+</ParamField>
+
+<ParamField body="organisationId" type="number">
+  Target organisation ID. Defaults to your primary organisation when omitted.
+</ParamField>
+
+### Response
+
+Returns the created film object.
+
+```json
+{
+  "film": {
+    "id": 15,
+    "title": "The Salt Flats",
+    "director": "Yuki Tanaka",
+    "year": 2025,
+    "runtimeMinutes": 102,
+    "posterUrl": "https://cdn.example.com/salt-flats.jpg",
+    "stillUrl": "https://cdn.example.com/salt-flats-still.jpg",
+    "attestRights": true,
+    "organisationId": 3
+  }
+}
+```
+
+---
+
+## GET /api/v1/host/films/:id
+
+Fetch a single film by its numeric ID.
+
+---
+
+## PATCH /api/v1/host/films/:id
+
+Update any combination of fields on an existing film. All fields from the `POST` body are accepted; all are optional.
+
+<Note>
+  Updating `runtimeMinutes` on a film that already has published screenings affects future stream windows but does not retroactively change tokens already issued to ticket holders.
+</Note>
+
+---
+
+## DELETE /api/v1/host/films/:id
+
+Permanently delete a film record. This operation is irreversible.
+
+<Warning>
+  You cannot delete a film that has active or published screenings attached to it. Cancel or delete all associated screenings first.
+</Warning>
+
+---
+
+## Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| 400 | `invalid_body` / `invalid_input` | Validation failed — check title, runtime, and URL lengths. |
+| 401 | `unauthorized` | Missing or expired token. |
+| 403 | `forbidden` | Valid token but insufficient permissions (e.g. door-only role). |
+| 404 | `not_found` | Film ID does not exist or belongs to another organisation. |
+
+---
+
+## Examples
+
+<CodeGroup>
+
+```bash List films
+curl https://usescreening.com/api/v1/host/films \
+  -H 'Authorization: Bearer scr_live_…'
+```
+
+```bash Create a film
+curl -X POST https://usescreening.com/api/v1/host/films \
+  -H 'Authorization: Bearer scr_live_…' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "title": "The Salt Flats",
+    "director": "Yuki Tanaka",
+    "year": 2025,
+    "runtimeMinutes": 102,
+    "posterUrl": "https://cdn.example.com/salt-flats.jpg",
+    "stillUrl": "https://cdn.example.com/salt-flats-still.jpg",
+    "attestRights": true
+  }'
+```
+
+```bash Update a film
+curl -X PATCH https://usescreening.com/api/v1/host/films/15 \
+  -H 'Authorization: Bearer scr_live_…' \
+  -H 'Content-Type: application/json' \
+  -d '{"year": 2025, "director": "Yuki Tanaka"}'
+```
+
+```bash Delete a film
+curl -X DELETE https://usescreening.com/api/v1/host/films/15 \
+  -H 'Authorization: Bearer scr_live_…'
+```
+
+</CodeGroup>

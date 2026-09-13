@@ -1,0 +1,135 @@
+---
+title: 'GET /api/v1/host/connect/status — Stripe Connect Readiness'
+sidebarTitle: '/host/connect/status'
+description: 'GET /api/v1/host/connect/status returns your Stripe Connect Express account status — charges, payouts, details submission, and overall readiness.'
+---
+
+Before you can sell tickets, Screening needs to know that your Stripe Connect Express account is fully onboarded and your payout country is confirmed. This endpoint returns a snapshot of your organisation's payout readiness so Studio — or your own integration — can gate publishing of paid screenings and surface the correct next step to you. You are the merchant of record; Screening simply routes payments to your connected account.
+
+<Warning>
+  Ticket sales stay closed for any screening — the booth shows no purchase button — until this endpoint returns `"ready": true`. Buyers see a "coming soon" state instead of Stripe Checkout. Complete Stripe onboarding before publishing a paid screening.
+</Warning>
+
+## Endpoint
+
+```
+GET /api/v1/host/connect/status
+```
+
+## Authentication
+
+Requires a `host`-persona device token or a valid Studio web session cookie. The authenticated user must have the `canManagePayouts` capability — standard admin hosts have this; door-only staff do not.
+
+| Method | Header |
+|--------|--------|
+| Device token | `Authorization: Bearer scr_live_…` |
+| Web session | HttpOnly cookie (browser only) |
+
+## Query parameters
+
+<ParamField query="organisationId" type="number">
+  Return status for a specific organisation. Defaults to your primary organisation when omitted.
+</ParamField>
+
+## Response
+
+A successful response returns HTTP `200` with the following fields.
+
+<ResponseField name="organisationId" type="number" required>
+  Your organisation's internal numeric ID.
+</ResponseField>
+
+<ResponseField name="organisationName" type="string" required>
+  Your organisation's display name as shown in Studio.
+</ResponseField>
+
+<ResponseField name="stripeAccountId" type="string | null" required>
+  The Stripe Connect Express account ID (`acct_…`) linked to your organisation. Returns `null` if you have not yet started onboarding.
+</ResponseField>
+
+<ResponseField name="chargesEnabled" type="boolean" required>
+  Whether Stripe has enabled card charges on your connected account. This becomes `true` once Stripe processes your onboarding details.
+</ResponseField>
+
+<ResponseField name="detailsSubmitted" type="boolean" required>
+  Whether you have completed the Stripe Connect onboarding form and submitted your details. Must be `true` before `ready` can be `true`.
+</ResponseField>
+
+<ResponseField name="payoutsEnabled" type="boolean" required>
+  Whether Stripe has activated payouts to your bank account. Payouts can occasionally be paused by Stripe for verification — check your Stripe dashboard if this is unexpectedly `false`.
+</ResponseField>
+
+<ResponseField name="ready" type="boolean" required>
+  The single gate for publishing paid screenings. `true` only when **all three** of the following are satisfied: `chargesEnabled`, `detailsSubmitted`, and `hostTermsAccepted`. Use this field — not the individual flags — to decide whether to allow publishing.
+</ResponseField>
+
+<ResponseField name="hostTermsAccepted" type="boolean" required>
+  Whether your organisation has accepted the Screening host (organiser) terms. You must accept the terms before starting Stripe onboarding — the Studio onboarding flow enforces this order.
+</ResponseField>
+
+### Additional fields
+
+The live response also includes the following fields for Studio UI use:
+
+| Field | Type | Notes |
+|-------|------|-------|
+| `hostStatus` | `string` | Internal host account status. |
+| `connectCountry` | `string` | Two-letter ISO country code for your payout market. Locked once a Stripe account is created. |
+| `payoutCurrency` | `string` | ISO 4217 currency code (e.g. `gbp`, `usd`) resolved from your connect country. |
+| `connectCountryLocked` | `boolean` | `true` once a Stripe account ID exists. Disconnect payouts to change country. |
+| `feeLabel` | `string` | Human-readable platform fee string (e.g. `"5% + 30p"`). |
+| `markets` | `array` | Supported Stripe Connect payout markets. |
+
+## Example response
+
+```json
+{
+  "organisationId": 3,
+  "organisationName": "Saltwater Films",
+  "stripeAccountId": "acct_1ABCDefGHIjKlMno",
+  "chargesEnabled": true,
+  "detailsSubmitted": true,
+  "payoutsEnabled": true,
+  "ready": true,
+  "hostTermsAccepted": true,
+  "hostStatus": "active",
+  "connectCountry": "GB",
+  "payoutCurrency": "gbp",
+  "connectCountryLocked": true,
+  "feeLabel": "5% + 30p"
+}
+```
+
+## Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| 401 | `unauthorized` | No valid session or token. |
+| 403 | `forbidden` | Token valid but user lacks `canManagePayouts` capability. |
+| 404 | `not_found` | No organisation found for this user or the supplied `organisationId`. |
+
+## Example
+
+<CodeGroup>
+
+```bash cURL
+curl https://usescreening.com/api/v1/host/connect/status \
+  -H 'Authorization: Bearer scr_live_…'
+```
+
+```typescript TypeScript
+const res = await fetch('https://usescreening.com/api/v1/host/connect/status', {
+  headers: { Authorization: 'Bearer scr_live_…' },
+});
+const status = await res.json();
+
+if (!status.ready) {
+  console.log('Complete Stripe onboarding before publishing paid screenings.');
+}
+```
+
+</CodeGroup>
+
+<Info>
+  This endpoint syncs your organisation's cached Stripe data on every call (when a `stripeAccountId` is present), so the response always reflects the latest state from Stripe — not a stale snapshot.
+</Info>

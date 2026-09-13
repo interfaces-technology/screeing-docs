@@ -1,0 +1,122 @@
+---
+title: 'Authenticate with the Screening API'
+sidebarTitle: 'Authentication'
+description: 'Use device tokens or short-lived JWTs to authenticate Screening API requests. Learn how to mint, refresh, exchange, and revoke tokens.'
+---
+
+The Screening API supports two authentication models: HttpOnly cookie sessions for browser-based clients (handled automatically), and device token pairs for native apps, scripts, and server-to-server integrations. This guide covers the device token lifecycle end-to-end — how to mint a pair, use the access token, rotate both tokens on refresh, exchange for a short-lived JWT, and revoke tokens when you're done.
+
+## Two authentication mechanisms
+
+<CardGroup cols={2}>
+  <Card title="Web / browser" icon="globe">
+    The Screening web app uses **Better Auth** HttpOnly cookie sessions on `.usescreening.com`. If you're building a browser extension or server-side rendered app that can forward cookies, this session is handled for you — no `Authorization` header is needed.
+  </Card>
+  <Card title="Native / API clients" icon="terminal">
+    Scripts, mobile apps, and server integrations use a **device token pair** minted from `POST /api/v1/auth/token`. Pass the access token as `Authorization: Bearer <accessToken>` on every request.
+  </Card>
+</CardGroup>
+
+## Device token format
+
+Tokens use a structured prefix so you can identify them at a glance.
+
+| Token | Prefix | TTL | Description |
+|-------|--------|-----|-------------|
+| Access token (production) | `scr_live_…` | 24 hours | Passed as `Authorization: Bearer` on every API call |
+| Access token (preview/dev) | `scr_test_…` | 24 hours | Issued on preview and local environments |
+| Refresh token (production) | `scr_rt_live_…` | 30 days | Single-use; rotated on each call to `/auth/refresh` |
+| Refresh token (preview/dev) | `scr_rt_test_…` | 30 days | Single-use on preview and local environments |
+
+Raw token values are shown **once** at mint time and once at each rotation. Tokens are stored as hashes — Screening cannot recover a lost token for you.
+
+## Persona scoping
+
+Every token is bound to a persona at mint time. A `host` token can only call `/api/v1/host/*` routes; a `watcher` token can only call `/api/v1/watcher/*` routes. The persona is embedded in the token prefix and enforced on every v1 route.
+
+| Persona | Who it's for | Access |
+|---------|-------------|--------|
+| `host` | Filmmakers | Invite-only — account must be granted host permission |
+| `watcher` | Buyers | Open signup |
+
+## Passing the token
+
+Include the access token in the `Authorization` header on every authenticated request:
+
+```http
+Authorization: Bearer scr_live_xxxxxxxxxxxxxxxxxxxx
+```
+
+The same header format works for short-lived JWTs minted via `/api/v1/auth/exchange`.
+
+## Full sign-in → use → refresh cycle
+
+The following example shows the complete lifecycle: mint a token pair, call a protected endpoint, and rotate the tokens when the access token nears expiry.
+
+```typescript
+// 1. Mint tokens
+const res = await fetch('https://usescreening.com/api/v1/auth/token', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    email: 'you@example.com',
+    password: 'secret',
+    persona: 'watcher',
+    label: 'My Integration',
+  }),
+});
+const { accessToken, refreshToken, accessExpiresAt } = await res.json();
+
+// 2. Use the access token
+const discover = await fetch('https://usescreening.com/api/v1/watcher/discover', {
+  headers: { 'Authorization': `Bearer ${accessToken}` },
+});
+
+// 3. Rotate tokens before (or after) expiry — old refreshToken is immediately invalidated
+const refresh = await fetch('https://usescreening.com/api/v1/auth/refresh', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ refreshToken }),
+});
+const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await refresh.json();
+// Store newAccessToken and newRefreshToken — the old pair is now invalid
+```
+
+## JWT exchange
+
+If you want a stateless token without storing a long-lived refresh token, call `POST /api/v1/auth/exchange`. It returns an HS256 JWT with a ~15 minute TTL. All v1 routes accept this JWT as a `Bearer` token in the same way as a device access token.
+
+```typescript
+const exchange = await fetch('https://usescreening.com/api/v1/auth/exchange', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ refreshToken: 'scr_rt_live_…' }),
+});
+const { accessToken: jwt, expiresAt } = await exchange.json();
+```
+
+<Tip>
+  JWT exchange is useful for short-lived server-side tasks — for example, minting a token per incoming webhook without persisting credentials. Mint a JWT, use it, and discard it.
+</Tip>
+
+## Token rotation
+
+Calling `/api/v1/auth/refresh` rotates **both** the access token and the refresh token. The previous refresh token is invalidated immediately. Store the new pair atomically — if two processes race to refresh the same token, the second call will fail with `401 invalid_token`.
+
+<Warning>
+  Refresh tokens are single-use. Store the newly rotated pair before making any further API calls, or you risk losing access to your device session.
+</Warning>
+
+## Revocation
+
+You can revoke tokens in three ways:
+
+1. **By Bearer token** — pass `Authorization: Bearer <accessToken>` to `POST /api/v1/auth/revoke`
+2. **By refresh token** — pass `{ "refreshToken": "scr_rt_…" }` in the body
+3. **By token ID** — pass `{ "tokenId": "<id>" }` (requires a web cookie session; get IDs from `GET /api/v1/auth/devices`)
+
+To sign out every device at once, use `POST /api/v1/auth/revoke-all` with an active web cookie session.
+
+<Note>
+  Changing or resetting your account password **automatically revokes all device tokens** for your user, across both personas.
+</Note>

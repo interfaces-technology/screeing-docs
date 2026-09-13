@@ -1,0 +1,59 @@
+---
+title: 'Managing Payouts and Viewing Sales in Studio'
+sidebarTitle: 'Managing Payouts'
+description: 'Track ticket sales, rent/buy revenue, and Stripe payouts from Studio — and understand how payout timing and currencies work for filmmakers.'
+---
+
+Studio gives you a live view of your revenue in the **Money** section. You can see sales totals broken down by tickets, rentals, and purchases, and open your Stripe Dashboard directly from Studio for detailed payout history. All payout scheduling and settlement is controlled by Stripe — Screening surfaces the numbers, but Stripe moves the money.
+
+## Viewing your sales in Studio
+
+Navigate to **Studio → Money** to see:
+
+- **Total ticket sales** — gross revenue from all paid screening tickets
+- **Rent revenue** — on-demand rental transactions
+- **Buy revenue** — on-demand purchase transactions
+
+Figures update as orders complete. Sales are visible in Studio as soon as a Stripe Checkout session is successfully completed.
+
+## Payout schedule
+
+Stripe Express operates on a **rolling 2–7 day payout schedule** for most accounts. This means funds collected today are typically in your bank account within two to seven business days, depending on your country and Stripe's assessment of your account history.
+
+<Note>
+  Payout timing is set by Stripe, not Screening. New Connect accounts sometimes face a longer initial holding period while Stripe builds confidence in the account. Check your payout schedule in the Stripe Dashboard — it shows your exact next payout date and the funds included.
+</Note>
+
+## Currency and international accounts
+
+Screening runs a GBP-first checkout. If your Stripe account is in a country that settles in a different currency, Stripe will convert and pay out in your local payout currency. Foreign cards (EUR, USD, AUD, etc.) are accepted at checkout — Stripe handles the conversion.
+
+## Accessing detailed payout history
+
+For a full breakdown of individual payouts, dispute history, and card-by-card transaction details, click **Open Stripe Dashboard** in Studio → Money. Your Stripe Dashboard shows:
+
+- Individual payout dates and amounts
+- Which transactions are included in each payout
+- Any holds, disputes, or reserve amounts
+- Card type breakdowns (Visa, Mastercard, etc.)
+
+## Refunds and disputes
+
+<Note>
+  **All Screening ticket sales are final.** There is no refund button in Studio — Screening does not provide a host-side refund interface. If a buyer contacts you about a genuine issue, direct them to [Screening support](https://usescreening.com). All refund and dispute actions are handled out-of-band through the Stripe Dashboard.
+</Note>
+
+If a buyer disputes a charge with their bank (a chargeback), the dispute is handled directly on your Stripe connected account. Stripe will notify you by email. You can respond to disputes, submit evidence, and track outcomes in your Stripe Dashboard. A £20 dispute fee applies for each chargeback, charged by Stripe.
+
+## Team access to Money
+
+Not all team roles can view the Money section:
+
+| Role | Can view Money |
+|---|---|
+| Owner | ✅ Yes |
+| Admin | ✅ Yes |
+| Editor | ❌ No |
+| Door | ❌ No |
+
+If a team member needs visibility into sales and payouts, assign them the **Admin** role in Studio → Team.

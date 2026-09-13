@@ -1,0 +1,117 @@
+---
+title: "Watch a Live Stream or On-Demand Film on Screening"
+sidebarTitle: "Watch Online"
+description: "Access your online ticket at /{org}/{slug}/live during the screening window, or watch on-demand films you have rented or purchased."
+---
+
+Screening delivers two kinds of online viewing: a live stream tied to a specific showtime, and on-demand access to films you can rent or buy and watch whenever you like. Both use the same protected cinema-quality player and the same ticket-email gate — no app, no plugin, just a browser and your purchase email.
+
+<Tabs>
+  <Tab title="Live Stream">
+
+    ## Joining a Live Stream
+
+    When you buy a ticket to an online or hybrid screening, your access point is the live page: `usescreening.com/{org}/{slug}/live`. Keep this URL — it's also linked in your confirmation email.
+
+    <Steps>
+      <Step title="Open the live page">
+        Navigate to `/{org}/{slug}/live` in your browser. You can use the **Watch now** link in your confirmation email, or type the URL directly. The page opens whether or not the screening has started.
+      </Step>
+      <Step title="Enter your ticket email">
+        At the gate, enter the **email address you used at checkout**. Alternatively, click the signed link in your confirmation email — this authenticates you automatically and skips the email entry step.
+      </Step>
+      <Step title="Wait for your window">
+        If you arrive before the screening starts, you'll see a **"Starting soon"** countdown showing time until the live stream opens. Stay on the page — it refreshes automatically when the window opens.
+      </Step>
+      <Step title="Watch">
+        Once the window opens, the player loads automatically. Screening's cinema player wraps a protected Mux video stream — playback is secured server-side and the stream URL is never exposed in your browser.
+      </Step>
+      <Step title="After the screening">
+        When the stream window closes (start time + runtime + a short close-late buffer set by the filmmaker), the live page switches to a thank-you card. If the filmmaker has the film available to rent or buy, you'll see a link to the on-demand page from there.
+      </Step>
+    </Steps>
+
+    ### The Stream Window
+
+    The live stream is available for a defined window:
+
+    | Time | What you see |
+    |------|-------------|
+    | Before start time | "Starting soon" countdown |
+    | Start time → end of window | Live player — the stream is running |
+    | After window closes | Thank-you card |
+
+    The window length is **start time + runtime + any close-late buffer** the filmmaker has set. If the filmmaker enables late sales, the booth stays open and new buyers can still join after the stream starts.
+
+    ### One Session per Email
+
+    Screening allows **one concurrent viewing session** per purchase email per screening. If you open the live page on a second device, that device becomes the active session and the first one is closed — **newest device wins**. To avoid interruption, pick one device before the screening starts and stick with it.
+
+    <Tip>
+      Close any extra browser tabs on the live page before the stream begins to make sure your active session is on the device you want to watch from.
+    </Tip>
+
+    ### Troubleshooting
+
+    If your stream won't load or you're stuck at the gate:
+
+    <Accordion title="The player won't start">
+      Make sure your screening window has opened — check the countdown. If the window is open and the player is blank, try a hard refresh (Ctrl+Shift+R / Cmd+Shift+R). If the issue persists, try a different browser (Chrome and Firefox are recommended).
+    </Accordion>
+    <Accordion title="My email isn't being accepted at the gate">
+      Double-check that you're entering the exact email address you used when you purchased the ticket — including any dots or plus signs. Your confirmation email shows the address at the top. If you're still stuck, use the signed link from that email instead.
+    </Accordion>
+    <Accordion title="My session keeps getting interrupted">
+      Another device may be taking over your session. Close the live page on all other devices and browsers, then reload on your preferred screen.
+    </Accordion>
+    <Accordion title="The window has closed but I couldn't watch">
+      Contact the filmmaker directly or reach [Screening support](https://usescreening.com) — screening windows are set by the filmmaker, so they're best placed to assist.
+    </Accordion>
+
+  </Tab>
+  <Tab title="On-Demand">
+
+    ## Watching On-Demand Films
+
+    Many films on Screening are available to rent or buy outside of a scheduled live night. You access them on the film's catalog page: `usescreening.com/{org}/film/{film-slug}`.
+
+    ### Rent or Buy
+
+    | Option | Access | When it starts |
+    |--------|--------|---------------|
+    | **Rent** | Timed window — hours set by the filmmaker (e.g. 48 hours) | Immediately on payment completion |
+    | **Buy** | Permanent access linked to your purchase email | Immediately on payment completion |
+
+    <Steps>
+      <Step title="Visit the film page">
+        Go to `/{org}/film/{film-slug}` — you'll find this linked from the org's public page, the Discover feed, or a filmmaker's direct share.
+      </Step>
+      <Step title="Choose rent or buy">
+        Select your access option. The filmmaker sets the price and rental window length for each film. Rental prices are typically lower than purchase prices.
+      </Step>
+      <Step title="Complete Stripe Checkout">
+        Enter the email address where you want your confirmation sent. Cards only — no BNPL. Your access is tied to this email.
+      </Step>
+      <Step title="Start watching">
+        After payment, you're redirected straight to the film player. Your access window begins immediately — the rental countdown starts from the moment payment completes.
+      </Step>
+    </Steps>
+
+    ### Accessing a Film You've Already Rented or Bought
+
+    Return to the film's page at `/{org}/film/{film-slug}` and enter your purchase email. Your active rental or purchase unlocks the player. You can also find your on-demand titles in your ticket portal at [/me](https://usescreening.com/me).
+
+    <Warning>
+      Your rental window starts the moment you pay — not the first time you press play. If you rent a film and plan to watch it later, bear in mind the clock is already running.
+    </Warning>
+
+    ### The On-Demand Player
+
+    On-demand films use the same protected Mux player as live streams — same cinema chrome, same security model. One concurrent session per email applies here too: the newest device wins if you open the film on multiple screens.
+
+  </Tab>
+</Tabs>
+
+<Note>
+  The Screening player is **leak-resistant, not piracy-proof**. Recording or redistributing a film without the filmmaker's permission is a violation of the terms of service and applicable copyright law.
+</Note>

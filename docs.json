@@ -1,72 +1,112 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "Screening",
+  "theme": "luma",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#000000",
+    "light": "#fafafa",
+    "dark": "#7c7c7c"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "https://media.brand.dev/9d647b1d-6979-4e05-91c3-952ee1451ed3.png",
   "navigation": {
-    "pages": [
+    "tabs": [
       {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "how-it-works",
+              "pricing"
+            ]
+          },
+          {
+            "group": "For Filmmakers",
+            "pages": [
+              "filmmakers/request-access",
+              "filmmakers/studio-overview",
+              "filmmakers/add-a-film",
+              "filmmakers/create-a-screening",
+              "filmmakers/publish-and-share",
+              "filmmakers/check-in"
+            ]
+          },
+          {
+            "group": "For Buyers",
+            "pages": [
+              "buyers/finding-screenings",
+              "buyers/buying-tickets",
+              "buyers/watching-online",
+              "buyers/my-tickets"
+            ]
+          },
+          {
+            "group": "Payouts & Billing",
+            "pages": [
+              "payouts/stripe-connect",
+              "payouts/fees-explained",
+              "payouts/managing-payouts"
+            ]
+          },
+          {
+            "group": "Help",
+            "pages": [
+              "help/faq",
+              "help/troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/authentication"
+            ]
+          },
+          {
+            "group": "Auth",
+            "pages": [
+              "api-reference/auth/token",
+              "api-reference/auth/refresh",
+              "api-reference/auth/exchange",
+              "api-reference/auth/devices",
+              "api-reference/auth/revoke"
+            ]
+          },
+          {
+            "group": "Host API",
+            "pages": [
+              "api-reference/host/bootstrap",
+              "api-reference/host/films",
+              "api-reference/host/screenings",
+              "api-reference/host/door-check-in",
+              "api-reference/host/connect-status"
+            ]
+          },
+          {
+            "group": "Watcher API",
+            "pages": [
+              "api-reference/watcher/discover",
+              "api-reference/watcher/booth",
+              "api-reference/watcher/access",
+              "api-reference/watcher/stream",
+              "api-reference/watcher/me"
+            ]
+          }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
     ]
   },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Go to Screening",
+      "href": "https://usescreening.com"
     }
   }
 }

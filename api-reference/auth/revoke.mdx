@@ -1,0 +1,141 @@
+---
+title: 'POST /api/v1/auth/revoke — Revoke Device Tokens'
+sidebarTitle: '/auth/revoke'
+description: 'POST /api/v1/auth/revoke revokes a single device token by Bearer, refresh token, or token ID. Use /auth/revoke-all to sign out all devices.'
+---
+
+Revoke a device token to immediately invalidate access for a specific integration or device session. You have three ways to identify the token to revoke — by passing the access token as a Bearer header, by providing the refresh token in the request body, or by providing a token ID obtained from `GET /api/v1/auth/devices`. To sign out every active device at once, use `POST /api/v1/auth/revoke-all`.
+
+## Revoke a single token
+
+**Method:** `POST`  
+**URL:** `/api/v1/auth/revoke`  
+**Auth required:** See the three methods below  
+**Rate limit:** 20 requests per minute per IP
+
+### Three ways to revoke
+
+<Tabs>
+  <Tab title="By Bearer token">
+    Pass the access token in the `Authorization` header. No request body is needed. This works without a cookie session.
+
+    ```bash
+    curl -X POST https://usescreening.com/api/v1/auth/revoke \
+      -H "Authorization: Bearer scr_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    ```
+
+  </Tab>
+  <Tab title="By refresh token">
+    Pass the refresh token in the JSON body. No `Authorization` header or cookie session required.
+
+    ```bash
+    curl -X POST https://usescreening.com/api/v1/auth/revoke \
+      -H "Content-Type: application/json" \
+      -d '{ "refreshToken": "scr_rt_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" }'
+    ```
+
+  </Tab>
+  <Tab title="By token ID (cookie session)">
+    Pass the token `id` from `GET /api/v1/auth/devices`. Requires an active web cookie session — this method lets you revoke any of your devices from the Studio without knowing their raw token values.
+
+    ```bash
+    curl -X POST https://usescreening.com/api/v1/auth/revoke \
+      -H "Content-Type: application/json" \
+      -H "Cookie: better-auth.session_token=<your-session-token>" \
+      -d '{ "tokenId": "tok_01hwxyz" }'
+    ```
+
+  </Tab>
+</Tabs>
+
+### Request body fields
+
+<ParamField body="refreshToken" type="string">
+  A refresh token to revoke (`scr_rt_live_…` or `scr_rt_test_…`). Provide this **or** `tokenId` in the body, **or** pass the access token as a Bearer header.
+</ParamField>
+
+<ParamField body="tokenId" type="string">
+  The `id` of a device returned by `GET /api/v1/auth/devices`. Requires an active web cookie session. Maximum 128 characters.
+</ParamField>
+
+### Response
+
+```json
+{ "revoked": true }
+```
+
+### Error codes (revoke one)
+
+| HTTP status | Code | Description |
+|-------------|------|-------------|
+| `400` | `invalid_json` | The request body is not valid JSON |
+| `400` | `missing_token` | No Bearer header, `refreshToken`, or `tokenId` was provided |
+| `401` | `invalid_token` | The token is invalid or has already been revoked |
+| `401` | `unauthorized` | `tokenId` was provided but no valid web cookie session is present |
+
+---
+
+## Revoke all devices
+
+**Method:** `POST`  
+**URL:** `/api/v1/auth/revoke-all`  
+**Auth required:** Active web cookie session (device token Bearer not accepted)
+
+Call this endpoint to immediately invalidate every active device token for your account, across both personas. This is equivalent to a full sign-out of all native and API clients.
+
+```bash
+curl -X POST https://usescreening.com/api/v1/auth/revoke-all \
+  -H "Cookie: better-auth.session_token=<your-session-token>"
+```
+
+### Response
+
+<ResponseField name="revokedCount" type="number">
+  The number of device tokens that were revoked.
+</ResponseField>
+
+```json
+{ "revokedCount": 3 }
+```
+
+### Error codes (revoke all)
+
+| HTTP status | Code | Description |
+|-------------|------|-------------|
+| `401` | `unauthorized` | No active web cookie session, or the request used a device token Bearer |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+---
+
+## TypeScript example
+
+```typescript
+// Revoke by Bearer token
+await fetch('https://usescreening.com/api/v1/auth/revoke', {
+  method: 'POST',
+  headers: { 'Authorization': `Bearer ${accessToken}` },
+});
+
+// Revoke by refresh token
+await fetch('https://usescreening.com/api/v1/auth/revoke', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ refreshToken }),
+});
+
+// Revoke all devices (from a browser with a cookie session)
+const res = await fetch('https://usescreening.com/api/v1/auth/revoke-all', {
+  method: 'POST',
+  credentials: 'include',
+});
+const { revokedCount } = await res.json();
+console.log(`Revoked ${revokedCount} device(s)`);
+```
+
+<Warning>
+  Revocation is **irreversible and immediate**. Once a token is revoked, any in-flight requests using that token will fail with `401`. If you need continued API access, mint a new token pair via `POST /api/v1/auth/token` first.
+</Warning>
+
+<Note>
+  You do not need to call `/auth/revoke` when a user changes or resets their password — **all device tokens for that account are revoked automatically** on any password change or reset event.
+</Note>

@@ -1,0 +1,93 @@
+---
+title: 'POST /api/v1/watcher/stream — Get a Signed Playback URL'
+sidebarTitle: '/watcher/stream'
+description: 'POST /api/v1/watcher/stream returns a short-lived signed Mux playback URL for an active screening session — call this after /watcher/access.'
+---
+
+Retrieve a signed, same-origin iframe URL for the active live-stream. Call this endpoint after [`POST /api/v1/watcher/access`](/api-reference/watcher/access) has established a valid session. The response contains a `frameUrl` you embed directly in your player UI — it loads the Mux player within a Screening-hosted frame that re-validates the session on every load.
+
+Signed playback tokens are intentionally short-lived. If the iframe stops playing or the token expires, call `/stream` again with the same session token to receive a fresh URL.
+
+<Note>
+  The raw Mux playback ID is never exposed — only the same-origin `frameUrl` is
+  returned. Embed this URL inside an `<iframe>` on your page. Cross-origin embedding
+  will be blocked by the frame's CSP headers; do not attempt to load `frameUrl`
+  from a different origin.
+</Note>
+
+## Request
+
+**Method:** `POST`  
+**URL:** `https://usescreening.com/api/v1/watcher/stream`  
+**Auth:** Ticket session Bearer (the `sessionToken` from `/watcher/access`) **or** an active watcher device token / cookie session.
+
+**Content-Type:** `application/json`
+
+### Request Body
+
+<ParamField body="sessionToken" type="string (UUID)">
+  The session token returned by [`POST /api/v1/watcher/access`](/api-reference/watcher/access).
+  Pass this to bind the playback request to your verified ticket session. You may
+  omit it if you are relying on an active authenticated watcher session instead.
+</ParamField>
+
+## Response
+
+<ResponseField name="frameUrl" type="string">
+  A same-origin URL pointing to the Screening-hosted Mux player frame. Embed this
+  as the `src` attribute of an `<iframe>` element. The frame re-checks session
+  validity on load and will refuse to play if the session has expired or the
+  live window has closed.
+</ResponseField>
+
+```json
+{
+  "frameUrl": "https://watch.usescreening.com/frame/the-still-point?st=eyJ..."
+}
+```
+
+## Example
+
+<Steps>
+  <Step title="Establish a session">
+    Call `/watcher/access` with your ticket token to receive a `sessionToken`.
+
+    ```bash
+    curl https://usescreening.com/api/v1/watcher/access \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -d '{ "slug": "the-still-point", "ticket": "tkn_a1b2c3d4..." }'
+    ```
+  </Step>
+
+  <Step title="Request the stream URL">
+    Pass the `sessionToken` from the previous step to `/watcher/stream`.
+
+    ```bash
+    curl https://usescreening.com/api/v1/watcher/stream \
+      -X POST \
+      -H "Content-Type: application/json" \
+      -d '{ "sessionToken": "a1b2c3d4-e5f6-7890-abcd-ef1234567890" }'
+    ```
+  </Step>
+
+  <Step title="Embed the frame URL">
+    Insert the returned `frameUrl` as the `src` of an iframe in your viewer UI.
+
+    ```html
+    <iframe
+      src="https://watch.usescreening.com/frame/the-still-point?st=eyJ..."
+      allow="autoplay; fullscreen"
+      allowfullscreen
+    ></iframe>
+    ```
+  </Step>
+</Steps>
+
+## Error Responses
+
+| Status | Code | Meaning |
+|--------|------|---------|
+| `401` | `unauthorized` | No valid session token or authenticated watcher session was provided. |
+| `403` | `forbidden` | The session is invalid, has been superseded, or the screening's live window has closed. |
+| `404` | `not_found` | No active screening could be resolved for the provided session. |

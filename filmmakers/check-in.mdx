@@ -1,0 +1,87 @@
+---
+title: 'Door Check-In for In-Person and Hybrid Screenings'
+sidebarTitle: 'Check-In'
+description: Run door check-in on the night using Screening's web check-in tool — search by ticket code or scan QR codes from buyers' confirmation emails.
+---
+
+Screening's door check-in tool is web-based — there's no app to install. Any member of your team with the `door` role can check in buyers from any device with a browser, whether that's a phone at the door, a tablet at the desk, or a laptop backstage. Buyers show their QR code or ticket code from their confirmation email, and you mark them admitted in seconds.
+
+<Note>
+  Door staff can use any device with a modern browser — no app installation needed. Share the Studio link ([/account](https://usescreening.com/account)) with your door team before the night.
+</Note>
+
+## Before the night: invite door staff
+
+<Steps>
+  <Step title="Open the Team tab">
+    In Studio at [/account](https://usescreening.com/account), select **Team** in the left navigation.
+  </Step>
+  <Step title="Invite your door staff">
+    Click **Invite**, enter the team member's email address, and set their role to **Door**. Send the invite.
+  </Step>
+  <Step title="Door staff accept the invite">
+    Your team member receives an invite email. They click the link, create a password (or use a passkey), and land on the Door view in Studio. They see only the Door section — no films, no sales data, no audience list.
+  </Step>
+</Steps>
+
+<Tip>
+  Invite door staff a day or two before the screening so they can confirm access and log in before the night begins.
+</Tip>
+
+## On the night: checking in buyers
+
+<Steps>
+  <Step title="Open Door in Studio">
+    Sign in to Studio at [/account](https://usescreening.com/account) on your check-in device. Select **Door** in the navigation. You'll see the check-in interface for your active screening.
+  </Step>
+  <Step title="Find the screening">
+    If you have multiple nights, select the correct screening from the list. Only screenings scheduled for today are shown by default.
+  </Step>
+  <Step title="Check in a buyer">
+    Use one of two methods:
+
+    - **Search by ticket code** — type or paste the buyer's ticket code into the search field. The buyer's name and ticket details appear. Click **Admit** to check them in.
+    - **Scan QR code** — click **Scan QR** to activate your device's camera. Hold the buyer's QR code in front of the camera. Screening reads the code and admits the ticket automatically.
+  </Step>
+  <Step title="Confirm admission">
+    Once admitted, the ticket is marked as checked in. If a buyer tries to use the same ticket code or QR again, the system flags it as already admitted.
+  </Step>
+</Steps>
+
+## QR codes and ticket types
+
+Buyers receive their QR code in their confirmation email when they purchase an **in-person** or **hybrid (in-person)** ticket. Not all ticket types include a QR code:
+
+| Ticket type | QR code issued | Check-in method |
+|-------------|---------------|----------------|
+| **In-person** | ✅ Yes | Scan QR or search ticket code |
+| **Hybrid — in-person** | ✅ Yes | Scan QR or search ticket code |
+| **Hybrid — online** | ❌ No | Buyers use their stream link at `/live` |
+| **Online only** | ❌ No | Buyers use their stream link — no door entry |
+
+<Note>
+  The QR code at the door and the stream link are separate access methods. Scanning a QR code at the door does not grant access to the online stream, and having a stream link does not allow entry to the physical venue.
+</Note>
+
+## Hybrid screenings
+
+For hybrid screenings, check in only the buyers who chose the **in-person** ticket type at checkout. Online ticket holders access the stream directly at `usescreening.com/{org}/{slug}/live` using the link in their confirmation email — they do not come through the door.
+
+## One check-in per ticket
+
+Each ticket can only be admitted once. If the same QR code or ticket code is scanned a second time, Screening shows an **Already admitted** message with the original check-in time. This prevents ticket sharing on the door.
+
+## Roles and access
+
+The `door` role is intentionally limited. A team member with the door role can:
+
+- View the Door check-in interface
+- Search and admit tickets for any active screening in the organisation
+
+They cannot:
+
+- View the Films, Nights, People, or Money sections
+- Edit or publish screenings
+- See sales data or audience information
+
+This means you can safely hand a check-in device to a volunteer without giving them access to your business data.

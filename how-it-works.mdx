@@ -1,0 +1,91 @@
+---
+title: 'How Screening Works: Premiere to Payout'
+sidebarTitle: 'How It Works'
+description: 'Understand the end-to-end Screening flow — from creating a film and scheduling a night to buyers purchasing tickets and watching live.'
+---
+
+Screening connects two journeys: the filmmaker who sets up and sells, and the buyer who discovers, pays, and watches. Both journeys converge at checkout and diverge again at the live window — one person is at the door or in the stream, the other is watching the sales come in. This page walks through the full end-to-end flow so you know exactly what happens at each step, whether you're the host or the audience.
+
+## The filmmaker journey
+
+Everything a filmmaker does to run a night lives in **Studio** — your workspace at `/account`. From requesting access to receiving payouts, here is the complete path.
+
+<Steps>
+  <Step title="Request host access">
+    Hosting on Screening is invite-only. Submit a request at [usescreening.com/host](https://usescreening.com/host) with your name, film details, and a note about your planned premiere. Platform ops review applications and grant access before you can create films or schedule nights.
+  </Step>
+  <Step title="Set up Studio">
+    Once approved, sign in to Studio at `/account`. Accept the host terms, connect your Stripe account via **Stripe Connect Express** (this is what enables direct payouts to you), and set your organisation's public URL slug. You will not be able to publish a screening until Stripe Connect is active.
+  </Step>
+  <Step title="Add your film">
+    Create a film once — title, runtime, poster, and stream file. Upload the video directly to Screening; it is processed and stored via **Mux** for secure, signed playback. You can schedule multiple screening nights and on-demand availability from this single film record.
+  </Step>
+  <Step title="Schedule a night and publish">
+    From your film, create a **screening night**. Choose the format (`online`, `in_person`, or `hybrid`), set the showtime, configure ticket tiers and capacity, and add a venue address if you have an in-person element. New nights start in **Draft** — the booth shows a "Coming soon" page and sales are closed. When you're ready, hit **Publish** to open the booth and start selling.
+
+    <Note>
+      Online and hybrid nights require a processed stream before you can publish. Make sure your film file has finished uploading and processing in Studio before scheduling a live window.
+    </Note>
+  </Step>
+  <Step title="Share your booth link">
+    Once published, share your booth URL — `usescreening.com/{org}/{slug}` — everywhere: social media, email lists, press contacts, and the discovery page. Use the share kit in Studio for a short link (`/r/…`), a downloadable QR code, and pre-written invite copy.
+  </Step>
+  <Step title="Go live and get paid">
+    On the night, the stream opens automatically at your scheduled time. The live page is at `/{org}/{slug}/live` and is only accessible to buyers with a valid ticket. Door staff use the web check-in tool in Studio to scan or search QR codes at the venue. After the window closes, payouts flow directly to your connected Stripe account — no waiting for Screening to release funds.
+  </Step>
+</Steps>
+
+## The buyer journey
+
+Buyers do not need a Screening account to purchase a ticket. A valid purchase email is all that's required to access the live stream or show at the door.
+
+1. **Discover or follow a link.** Buyers find nights on `/discover` — a public listing of upcoming screenings — or land directly on a booth via a link you share.
+2. **View the booth.** The booth at `/{org}/{slug}` shows the film poster, your organisation name, the showtime, ticket tiers, and a buy button. For hybrid nights, buyers choose between online and in-person attendance at this step.
+3. **Pay via Stripe Checkout.** Clicking "Buy" opens a Stripe-hosted checkout. Payment is by card only — no Klarna or BNPL. The platform fee is applied transparently at checkout; buyers pay the face price of the ticket.
+4. **Receive confirmation and reminders.** After payment completes, Screening sends an email confirmation containing the ticket code and QR. Automated reminders go out **24 hours** and **1 hour** before the showtime. A calendar download is included.
+5. **Watch online or show QR at the door.** Online ticket holders visit `/{org}/{slug}/live` at showtime and enter the stream using their ticket email. In-person ticket holders present their QR code to door staff, who scan or search it in the Studio check-in tool. One concurrent session per email is permitted on the stream.
+6. **Access history at `/me`.** After the night, buyers can view all their tickets, codes, and watch history. An account is optional but keeps everything in one place.
+
+## The hybrid model in detail
+
+When you schedule a hybrid night, you run a single showtime with two simultaneously open venues: the room and the stream. Here is how the two tracks stay separate.
+
+| Step | Online buyer | In-person buyer |
+|---|---|---|
+| Checkout | Selects "Online" | Selects "In person" |
+| Confirmation | Email with stream access instructions | Email with QR code |
+| On the night | Visits `/live`, enters with ticket email | Shows QR at the door |
+| Door access | QR does **not** unlock the stream | — |
+| Stream access | Ticket email unlocks stream | Stream link is not issued |
+
+Capacity limits apply independently: you set an online cap and an in-person cap. Selling out one does not close the other.
+
+## After the night
+
+The end of the live window is not the end of the release. Screening's rails stay live after the credits roll.
+
+<CardGroup cols={2}>
+  <Card title="On-demand rent & buy" icon="play">
+    Make the film available to rent (timed access) or buy (lasting access) directly from the film's catalogue page at `/{org}/film/{slug}`. The same playback protection and payout flow apply.
+  </Card>
+  <Card title="Repeat screenings" icon="calendar-days">
+    Schedule encore nights from the same film record — no need to upload the film again. Use the same booth setup for community screenings, tour dates, or recurring series.
+  </Card>
+  <Card title="Audience follows" icon="users">
+    Buyers can follow your organisation on Discover. Build your list of direct supporters who hear about every new night and release.
+  </Card>
+  <Card title="Sales and payouts" icon="chart-line">
+    Review ticket totals, rent/buy splits, and payout history in the **Money** section of Studio. Everything flows directly to your connected Stripe account.
+  </Card>
+</CardGroup>
+
+## Dive deeper
+
+<CardGroup cols={2}>
+  <Card title="Filmmaker guides" icon="clapperboard" href="/filmmakers/request-access">
+    Step-by-step walkthroughs for setting up Studio, adding films, scheduling nights, and managing payouts.
+  </Card>
+  <Card title="Buyer guides" icon="ticket" href="/buyers/finding-screenings">
+    How to find screenings, buy tickets, access the stream, and manage your ticket history.
+  </Card>
+</CardGroup>

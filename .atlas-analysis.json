@@ -1,0 +1,138 @@
+{
+  "projectType": "saas",
+  "projectName": "Screening",
+  "projectDescription": "Screening is independent film infrastructure that lets filmmakers run ticketed premiere nights — virtual, in-person, or hybrid — and keep their audience and revenue directly through Stripe Connect.",
+  "theme": "luma",
+  "primaryColor": "#000000",
+  "lightColor": "#fafafa",
+  "darkColor": "#7c7c7c",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "how-it-works",
+              "pricing"
+            ]
+          },
+          {
+            "group": "For Filmmakers",
+            "pages": [
+              "filmmakers/request-access",
+              "filmmakers/studio-overview",
+              "filmmakers/add-a-film",
+              "filmmakers/create-a-screening",
+              "filmmakers/publish-and-share",
+              "filmmakers/check-in"
+            ]
+          },
+          {
+            "group": "For Buyers",
+            "pages": [
+              "buyers/finding-screenings",
+              "buyers/buying-tickets",
+              "buyers/watching-online",
+              "buyers/my-tickets"
+            ]
+          },
+          {
+            "group": "Payouts & Billing",
+            "pages": [
+              "payouts/stripe-connect",
+              "payouts/fees-explained",
+              "payouts/managing-payouts"
+            ]
+          },
+          {
+            "group": "Help",
+            "pages": [
+              "help/faq",
+              "help/troubleshooting"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/authentication"
+            ]
+          },
+          {
+            "group": "Auth",
+            "pages": [
+              "api-reference/auth/token",
+              "api-reference/auth/refresh",
+              "api-reference/auth/exchange",
+              "api-reference/auth/devices",
+              "api-reference/auth/revoke"
+            ]
+          },
+          {
+            "group": "Host API",
+            "pages": [
+              "api-reference/host/bootstrap",
+              "api-reference/host/films",
+              "api-reference/host/screenings",
+              "api-reference/host/door-check-in",
+              "api-reference/host/connect-status"
+            ]
+          },
+          {
+            "group": "Watcher API",
+            "pages": [
+              "api-reference/watcher/discover",
+              "api-reference/watcher/booth",
+              "api-reference/watcher/access",
+              "api-reference/watcher/stream",
+              "api-reference/watcher/me"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Hybrid screening nights — sell tickets for in-person, online, or both simultaneously",
+    "Stripe Connect Express payouts — filmmakers are the merchant of record; buyers pay them directly",
+    "Timed live-stream gate — one concurrent session per ticket email, short-lived signed Mux playback",
+    "On-demand rent or buy — same rails as a live night, available after the premiere window",
+    "Web door check-in — scan or search ticket codes; QR codes in confirmation emails",
+    "Studio CMS — draft → publish → cancel lifecycle with rights attestation and publish checklist",
+    "Ticket tiers and capacity — Standard and Concession tiers, venue fields for in-person events",
+    "Interest and waitlist pages — gauge demand and collect pre-orders before going on sale",
+    "Discover feed — public listing of upcoming nights; buyers can follow organisations",
+    "Automated email — ticket confirmations, 24h and 1h reminders, postpone and cancel notices",
+    "Team roles — owner, admin, editor, viewer, and door staff per organisation",
+    "Platform fee 5% + 30p all-in — card processing absorbed; no monthly subscription for Free tier"
+  ],
+  "publicApiSurface": [
+    "POST /api/v1/auth/token — email/password sign-in, mint scoped device token pair",
+    "POST /api/v1/auth/refresh — rotate access + refresh tokens",
+    "POST /api/v1/auth/exchange — mint short-lived JWT (~15 min) from refresh token or cookie session",
+    "GET /api/v1/auth/devices — list active devices for the signed-in session",
+    "POST /api/v1/auth/revoke — revoke one device token",
+    "POST /api/v1/auth/revoke-all — revoke all device tokens for the signed-in user",
+    "GET /api/v1/host/account/bootstrap — load host workspace data",
+    "GET|POST /api/v1/host/films — list and create films",
+    "GET|PATCH|DELETE /api/v1/host/films/:id — read, update, delete a film",
+    "GET|POST /api/v1/host/screenings — list and create screenings",
+    "GET|PATCH|DELETE /api/v1/host/screenings/:id — read, update, delete a screening",
+    "GET|POST /api/v1/host/door/check-in — fetch and submit ticket check-ins",
+    "GET /api/v1/host/connect/status — Stripe Connect readiness for the organisation",
+    "GET /api/v1/watcher/discover — paginated public screening discovery feed",
+    "GET /api/v1/watcher/booth/:orgSlug/:screeningSlug — public booth metadata for a screening",
+    "POST /api/v1/watcher/access — verify ticket and establish live-stream session",
+    "POST /api/v1/watcher/stream — return signed Mux playback frame URL",
+    "GET /api/v1/watcher/me — current watcher user profile and capabilities",
+    "GET /api/v1/watcher/checkout/return — post-payment return and ticket fulfillment"
+  ]
+}
