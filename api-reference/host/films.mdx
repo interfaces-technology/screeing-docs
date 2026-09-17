@@ -30,6 +30,8 @@ List every film belonging to your organisation. Pass `organisationId` to scope t
 
 ### Response
 
+The response includes a `library` block that reports how the organisation stands against its plan's film ceiling. Use it to warn users before they attempt an upload that will be refused.
+
 ```json
 {
   "films": [
@@ -44,15 +46,44 @@ List every film belonging to your organisation. Pass `organisationId` to scope t
       "attestRights": true,
       "organisationId": 3
     }
-  ]
+  ],
+  "library": {
+    "planSlug": "free",
+    "used": 3,
+    "limit": 5,
+    "remaining": 2,
+    "atLimit": false
+  }
 }
 ```
+
+<ResponseField name="library.planSlug" type="string">
+  The organisation's current plan: `free`, `pro`, or `studio`.
+</ResponseField>
+
+<ResponseField name="library.used" type="number">
+  Films currently in the library.
+</ResponseField>
+
+<ResponseField name="library.limit" type="number | null">
+  The ceiling for this plan. `null` means no ceiling (Studio).
+</ResponseField>
+
+<ResponseField name="library.remaining" type="number | null">
+  How many more films the organisation may add. `null` when unlimited. Never negative — an organisation already over its ceiling shows `0`.
+</ResponseField>
+
+<ResponseField name="library.atLimit" type="boolean">
+  `true` when another `POST /host/films` would be refused with `plan_limit_reached`.
+</ResponseField>
 
 ---
 
 ## POST /api/v1/host/films
 
 Create a new film record. You need the `canManageCms` capability (host admin) to create films — door-only staff cannot call this endpoint.
+
+The organisation's film library is capped per plan (Free 5, Pro 100, Studio unlimited). If the organisation is already at its ceiling, the request is refused with `403 plan_limit_reached` **before** any film row or Mux upload is created. Check the `library` block on `GET /host/films` beforehand to avoid the round-trip.
 
 ### Request body
 
@@ -143,6 +174,7 @@ Permanently delete a film record. This operation is irreversible.
 | 400 | `invalid_body` / `invalid_input` | Validation failed — check title, runtime, and URL lengths. |
 | 401 | `unauthorized` | Missing or expired token. |
 | 403 | `forbidden` | Valid token but insufficient permissions (e.g. door-only role). |
+| 403 | `plan_limit_reached` | Organisation is at its plan's film ceiling. The error body includes `limit`, `used`, and `planSlug`. |
 | 404 | `not_found` | Film ID does not exist or belongs to another organisation. |
 
 ---
