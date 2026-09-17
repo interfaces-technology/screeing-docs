@@ -1,41 +1,45 @@
 ---
-title: 'Request Host Access on Screening — Invite-Only Onboarding'
-sidebarTitle: 'Request Access'
-description: Screening is invite-only for filmmakers. Learn how to request host access, what happens after approval, and how to complete onboarding.
+title: 'Sign up as a host on Screening'
+sidebarTitle: 'Sign up'
+description: Screening is open to every filmmaker. Create a host account, connect Stripe, and publish your first screening — no invite or approval required.
 ---
 
-Screening is invite-only for filmmakers. To run ticketed nights and sell on-demand access, you need a host account — start by submitting a request at [usescreening.com/host](https://usescreening.com/host). Once the team reviews and approves your request, you'll receive an invite to set up your Studio workspace and connect your bank through Stripe.
+Screening is open self-serve. Any filmmaker can create a host account, set up an organisation, and publish a screening without an invite or manual approval. Sign up at **[usescreening.com/signup](https://usescreening.com/signup)** and you land in Studio as soon as your email is confirmed.
 
-## Request host access
+## Create your account
 
-Submit your access request at **[usescreening.com/host](https://usescreening.com/host)**. The Screening team reviews every application and reaches out by email when your invite is ready. There is no fixed timeline, but most requests are reviewed within a few days.
+Go to **[usescreening.com/signup](https://usescreening.com/signup)** and sign up with your email address and a password. Screening sends a confirmation email — click the link to verify your address, then sign in at [/account](https://usescreening.com/account). You can add a passkey afterwards to skip the password on future logins.
+
+<Note>
+  Signup lands on a "confirm your email" screen rather than logging you straight in. You have to click the link in that email before you can access Studio.
+</Note>
 
 ## Onboarding flow
 
-Once your invite arrives, follow these steps to finish setting up your host account:
+Once your email is confirmed, follow these steps to finish setting up your host account:
 
 <Steps>
-  <Step title="Accept your invite and sign up">
-    Click the link in your invite email to open Studio at [/account](https://usescreening.com/account). Create your account with an email address and password. You can also add a passkey after sign-up to log in without a password in future.
+  <Step title="Create your organisation">
+    In Studio, create your organisation and choose its URL slug (for example `usescreening.com/yourname`). This is the identity buyers see on your booth and on Discover. The slug is reserved as soon as you claim it.
   </Step>
   <Step title="Accept host terms">
-    Review and accept the Screening host terms. You'll find these in **Studio → Money**. Sales remain closed until you've accepted.
+    Review and accept the Screening Organiser Agreement. You'll find it in **Studio → Money**. Sales stay closed until you've accepted.
   </Step>
   <Step title="Connect Stripe">
     Go to **Studio → Money → Connect Stripe**. Screening uses Stripe Connect Express to process payments — you are the merchant of record, and buyers pay you directly. You'll need a bank account, a phone number for verification, and your business or personal details ready.
   </Step>
-  <Step title="Set your organisation URL and profile">
-    Choose your organisation URL (for example `usescreening.com/yourname`) and fill in your public profile. This is the identity buyers see on your booth and on Discover. You can update your profile at any time from **Studio → Money**.
+  <Step title="Fill in your public profile">
+    Add your organisation name, avatar, and bio. This is what shows on your booth and on Discover. You can update your profile at any time from **Studio → Money**.
   </Step>
 </Steps>
 
 <Note>
-  All onboarding steps must be complete before you can publish a screening and open ticket sales. Studio shows a checklist on the Home tab so you can see what's left.
+  Publishing a paid screening requires an approved host status, a Stripe account with charges enabled, a signed Organiser Agreement, and a playable stream. Studio shows a checklist on the Home tab so you can see what's left. Free (£0) screenings do not need Stripe.
 </Note>
 
 ## Roles and permissions
 
-When you sign up through an invite, you become the **owner** of your organisation. You can then invite team members with more limited roles. Every role is scoped to a single organisation.
+When you sign up, you become the **owner** of your organisation. You can then invite team members with more limited roles. Every role is scoped to a single organisation.
 
 | Role | What they can do |
 |------|-----------------|
@@ -46,22 +50,22 @@ When you sign up through an invite, you become the **owner** of your organisatio
 | **Door** | Door check-in view only — no CMS access |
 
 <Tip>
-  One login can be both a host and a buyer. Use your host account to purchase tickets for other filmmakers' nights — your tickets appear in the buyer-facing [/me](https://usescreening.com/me) page.
+  One login can be both a host and a buyer. Use your host account to purchase tickets for other filmmakers' nights. Your tickets appear in the buyer-facing [/me](https://usescreening.com/me) page.
 </Tip>
 
 ## What happens at each stage
 
 <CardGroup cols={2}>
-  <Card title="While you wait" icon="hourglass">
-    Your access request sits in the Screening team's inbox. There's no action needed on your side — you'll receive an email when your invite is ready.
+  <Card title="After signup" icon="envelope-open">
+    You receive a confirmation email. Click the link to verify your address and sign in to Studio.
   </Card>
-  <Card title="After approval" icon="envelope-open">
-    You receive an email with a sign-up link. The link is single-use and expires, so complete sign-up when you receive it.
+  <Card title="After creating an organisation" icon="building">
+    You're an organisation owner with a Studio workspace. Your organisation URL is reserved. You cannot publish a paid screening yet — connect Stripe and finish the onboarding checklist first.
   </Card>
-  <Card title="After sign-up" icon="building">
-    You're an organisation owner with a Studio workspace. Your organisation URL is reserved. You cannot publish a screening yet — complete the onboarding checklist first.
+  <Card title="After Stripe is connected" icon="credit-card">
+    Payouts flow directly to your bank. You can publish paid screenings once your Stripe account has charges enabled.
   </Card>
-  <Card title="After onboarding" icon="circle-check">
-    You can add films, schedule nights, and publish your first screening. Buyers can find you on Discover or via your direct booth link.
+  <Card title="After publishing" icon="circle-check">
+    Your booth is live. Buyers can find you on Discover or via your direct booth link. Payouts arrive on Stripe's rolling 2–7 day schedule.
   </Card>
 </CardGroup>

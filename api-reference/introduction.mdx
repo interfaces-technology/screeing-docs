@@ -22,7 +22,7 @@ The API is split into two persona namespaces. Your device token is scoped to exa
 
 <CardGroup cols={2}>
   <Card title="Host — /api/v1/host/*" icon="clapperboard">
-    Filmmaker endpoints for managing films, screenings, Stripe Connect status, and door check-in. Access is **invite-only** — your account must be granted host permission before you can mint a `host`-scoped token.
+    Filmmaker endpoints for managing films, screenings, Stripe Connect status, and door check-in. Signup is open self-serve at [usescreening.com/signup](https://usescreening.com/signup); selling requires an approved organisation with Stripe Connect enabled.
   </Card>
   <Card title="Watcher — /api/v1/watcher/*" icon="ticket">
     Buyer-facing endpoints for discovering screenings, viewing booth pages, checking out, and accessing streams. Open to any registered watcher account.
@@ -98,7 +98,7 @@ Common HTTP status codes:
 |--------|---------|
 | `400` | Bad request — invalid body, missing field, or malformed JSON |
 | `401` | Unauthenticated — missing, expired, or invalid token |
-| `403` | Forbidden — authenticated but not authorised (e.g. host access invite-only) |
+| `403` | Forbidden — authenticated but not authorised (for example, no approved host organisation) |
 | `404` | Resource not found |
 | `429` | Rate limited — back off and retry after a short delay |
 | `503` | Service unavailable — auth not configured on this deployment |

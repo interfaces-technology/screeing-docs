@@ -22,7 +22,7 @@ Use this endpoint to exchange your email and password for a device token pair. T
 </ParamField>
 
 <ParamField body="persona" type="string" required>
-  The persona scope for this token pair. Must be `host` (filmmaker, invite-only) or `watcher` (buyer, open signup).
+  The persona scope for this token pair. Must be `host` (filmmaker) or `watcher` (buyer). Both personas are open self-serve signup; host-scoped tokens still require an approved organisation before you can sell.
 </ParamField>
 
 <ParamField body="label" type="string">
@@ -64,7 +64,7 @@ A successful `200` response returns the token pair and expiry metadata.
 | `400` | `invalid_json` | The request body is not valid JSON |
 | `400` | `invalid_body` | One or more required fields are missing or invalid |
 | `401` | `invalid_credentials` | Email or password is incorrect |
-| `403` | `forbidden` | Host access is invite-only — your account has not been granted host permission |
+| `403` | `forbidden` | Your account is not authorised for the requested persona (for example, no approved host organisation) |
 | `429` | `rate_limited` | Too many requests from this IP — wait before retrying |
 | `503` | `auth_not_configured` | Auth is not configured on this deployment |
 
