@@ -53,6 +53,13 @@ See the [Authentication guide](/api-reference/authentication) for the full token
 | `/api/v1/auth/devices` | GET | List active devices (web cookie session required) |
 | `/api/v1/auth/revoke` | POST | Revoke one device token |
 | `/api/v1/auth/revoke-all` | POST | Revoke all device tokens (web cookie session required) |
+| `/api/v1/auth/apple/verify` | POST | Verify a native Sign in with Apple identity token and mint device tokens |
+| `/api/v1/auth/mobile/code` | POST | Mint a one-time login code from a web cookie session for native app handoff |
+| `/api/v1/auth/mobile/token` | POST | Exchange a mobile login code for a device token pair |
+| `/api/v1/auth/passkey/authenticate-options` | GET | Fetch a WebAuthn assertion challenge for native passkey sign-in |
+| `/api/v1/auth/passkey/authenticate-verify` | POST | Verify a native passkey assertion and mint device tokens |
+| `/api/v1/auth/passkey/register-options` | GET | Fetch a WebAuthn registration challenge (web cookie session required) |
+| `/api/v1/auth/passkey/register-verify` | POST | Attach a native passkey to the signed-in account (web cookie session required) |
 
 ### Host — `/api/v1/host/*`
 
@@ -64,6 +71,8 @@ See the [Authentication guide](/api-reference/authentication) for the full token
 | `/api/v1/host/screenings` | GET, POST | List and create screenings |
 | `/api/v1/host/screenings/:id` | GET, PATCH, DELETE | Read, update, or delete a single screening |
 | `/api/v1/host/door/check-in` | GET, POST | List and process door check-ins |
+| `/api/v1/host/door/sell` | POST | Create a Stripe Terminal PaymentIntent for a Tap to Pay door sale |
+| `/api/v1/host/door/terminal/connection-token` | POST | Mint a Stripe Terminal connection token for the iPhone Tap to Pay reader |
 | `/api/v1/host/connect/status` | GET | Stripe Connect onboarding status |
 
 ### Watcher — `/api/v1/watcher/*`

@@ -29,7 +29,8 @@
               "filmmakers/add-a-film",
               "filmmakers/create-a-screening",
               "filmmakers/publish-and-share",
-              "filmmakers/check-in"
+              "filmmakers/check-in",
+              "filmmakers/ios-app"
             ]
           },
           {
@@ -75,7 +76,10 @@
               "api-reference/auth/refresh",
               "api-reference/auth/exchange",
               "api-reference/auth/devices",
-              "api-reference/auth/revoke"
+              "api-reference/auth/revoke",
+              "api-reference/auth/mobile",
+              "api-reference/auth/passkey",
+              "api-reference/auth/apple"
             ]
           },
           {
@@ -85,6 +89,8 @@
               "api-reference/host/films",
               "api-reference/host/screenings",
               "api-reference/host/door-check-in",
+              "api-reference/host/door-sell",
+              "api-reference/host/terminal-connection-token",
               "api-reference/host/connect-status"
             ]
           },

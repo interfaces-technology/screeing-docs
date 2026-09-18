@@ -1,0 +1,120 @@
+---
+title: 'POST /api/v1/host/door/sell — Tap to Pay Door Sale'
+sidebarTitle: 'Door Sell'
+description: 'POST /api/v1/host/door/sell creates a Stripe Terminal PaymentIntent for an in-person Tap to Pay ticket sale on a host-owned iPhone.'
+---
+
+Create a Stripe Terminal PaymentIntent for an in-person ticket sale. The returned `clientSecret` is what you pass to the Stripe Terminal SDK on the iPhone to collect a Tap to Pay payment. The ticket itself is issued **asynchronously** — Stripe calls back to Screening's `payment_intent.succeeded` webhook, which creates the order, sends the buyer's confirmation email, and admits the ticket for check-in.
+
+<Note>
+  This endpoint powers the **Sell** tab in the [Screening for Hosts iOS app](/filmmakers/ios-app). You only need to call it directly if you're building your own in-person point-of-sale on top of Screening.
+</Note>
+
+**Method:** `POST`
+**URL:** `/api/v1/host/door/sell`
+**Auth required:** Host device token (`Authorization: Bearer scr_*`) with door access to the screening
+
+## Prerequisites
+
+Before this call will succeed, the target screening's organisation must:
+
+- Be an approved host
+- Have finished Stripe Connect onboarding (a `stripe_account_id` is present)
+- Own the screening you're selling for
+- Have late sales enabled if the screening has already started
+
+The signed-in user must have a Studio role with door access to the screening (`owner`, `admin`, or `door`).
+
+## Request body
+
+<ParamField body="screeningId" type="number" required>
+  The numeric ID of the screening this ticket is for. Must be a positive integer.
+</ParamField>
+
+<ParamField body="tierId" type="number">
+  The numeric ticket tier ID. Optional — if omitted, the first tier for the screening is used. Must be a positive integer.
+</ParamField>
+
+<ParamField body="quantity" type="number" default="1">
+  Number of tickets to sell in this transaction. Between 1 and 10. Defaults to `1`.
+</ParamField>
+
+<ParamField body="buyerEmail" type="string" required>
+  The buyer's email address. Used to send the ticket and receipt. Maximum 320 characters.
+</ParamField>
+
+## Response
+
+A successful `200` response returns the PaymentIntent details you need to collect the payment client-side.
+
+<ResponseField name="paymentIntentId" type="string">
+  The Stripe PaymentIntent ID.
+</ResponseField>
+
+<ResponseField name="clientSecret" type="string">
+  The PaymentIntent client secret. Pass this to the Stripe Terminal SDK on the iPhone to collect the Tap to Pay payment.
+</ResponseField>
+
+<ResponseField name="amountPence" type="number">
+  The total charge amount in the smallest currency unit (pence, cents).
+</ResponseField>
+
+<ResponseField name="currency" type="string">
+  The three-letter ISO currency code (for example, `gbp`).
+</ResponseField>
+
+## Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| `400` | `invalid_json` | Request body is not valid JSON |
+| `400` | `invalid_body` | Missing or invalid field |
+| `401` | `unauthorized` | Missing or expired token |
+| `403` | `forbidden` | Signed-in user has no door access to this screening |
+| `403` | `unavailable` | Screening is cancelled or still a draft |
+| `403` | `sales_closed` | Screening has ended |
+| `403` | `doors_closed` | Screening has started and late sales are disabled |
+| `403` | `sold_out` | Not enough tickets remaining for the requested quantity |
+| `403` | `host_not_approved` | The organisation is not an approved host |
+| `403` | `payouts_not_ready` | Stripe Connect onboarding is incomplete |
+| `403` | `price_too_low` | Ticket price is lower than the Screening fee |
+| `404` | `not_found` | Screening not found |
+| `500` | `no_tier` | The screening has no ticket tiers configured |
+| `500` | `no_client_secret` | Stripe returned a PaymentIntent without a client secret |
+| `500` | `door_sale_unavailable` | Stripe rejected the PaymentIntent for another reason |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+## Fulfilment and refunds
+
+Ticket issuance runs off the Stripe webhook, not the response of this call. Do not treat a `200` response as proof that the ticket exists — always wait for the webhook (or refresh the buyer's tickets) before telling them the sale is complete.
+
+Refunds and cancellations are handled through the Stripe Dashboard on your connected account, exactly like online sales. See [Managing payouts](/payouts/managing-payouts) for the full flow.
+
+## Example
+
+```bash cURL
+curl -X POST https://usescreening.com/api/v1/host/door/sell \
+  -H "Authorization: Bearer scr_live_…" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "screeningId": 42,
+    "tierId": 17,
+    "quantity": 2,
+    "buyerEmail": "buyer@example.com"
+  }'
+```
+
+**Example response:**
+
+```json
+{
+  "paymentIntentId": "pi_3P…",
+  "clientSecret": "pi_3P…_secret_…",
+  "amountPence": 2000,
+  "currency": "gbp"
+}
+```
+
+<Tip>
+  Before calling this endpoint, mint a Stripe Terminal connection token with [`POST /api/v1/host/door/terminal/connection-token`](/api-reference/host/terminal-connection-token) and connect the Tap to Pay reader on the iPhone. Otherwise the SDK has nothing to collect against.
+</Tip>
