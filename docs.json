@@ -78,7 +78,8 @@
               "api-reference/auth/devices",
               "api-reference/auth/revoke",
               "api-reference/auth/mobile",
-              "api-reference/auth/passkey"
+              "api-reference/auth/passkey",
+              "api-reference/auth/apple"
             ]
           },
           {

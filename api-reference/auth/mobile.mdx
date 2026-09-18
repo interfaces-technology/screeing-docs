@@ -4,7 +4,11 @@ sidebarTitle: '/auth/mobile'
 description: 'Hand a signed-in web session off to a native app: mint a one-time code in the browser, exchange it in the app for a scoped device token pair.'
 ---
 
-The mobile login endpoints let a native app hand off authentication to the web login page instead of shipping its own password form. The user signs in in a system browser, the login page mints a one-time code from their cookie session, and the app exchanges that code for a scoped device token pair. This is the same flow the [Screening for Hosts iOS app](/filmmakers/ios-app) uses.
+The mobile login endpoints let a native app hand off authentication to the web login page instead of shipping its own password form. The user signs in in a system browser, the login page mints a one-time code from their cookie session, and the app exchanges that code for a scoped device token pair.
+
+<Note>
+  The [Screening for Hosts iOS app](/filmmakers/ios-app) does **not** use this flow — it signs in natively with Sign in with Apple or a passkey. This flow is still available for third-party clients that would rather delegate to the web login page.
+</Note>
 
 ## When to use this
 

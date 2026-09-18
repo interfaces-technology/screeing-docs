@@ -39,16 +39,16 @@ Tap to Pay on iPhone is a Stripe and Apple feature with hard requirements. Check
 
 ## Signing in
 
-The app uses the same sign-in as Studio. Two paths are supported:
+Sign-in happens entirely inside the app — no browser handoff. Two paths are supported:
 
-- **Passkey sign-in** — if you've added a passkey to your account, tap **Sign in with passkey** and use Face ID or Touch ID. No password required and no browser opens.
-- **Web sign-in fallback** — tap **Sign in** to open a secure Apple system browser to `usescreening.com/login`. Sign in as normal (password or passkey), and the app is returned to and signed in automatically.
+- **Sign in with Apple** — tap **Continue with Apple** and confirm with Face ID or Touch ID. Uses the email on your Apple ID to match your existing Screening host account. Your account must already have that email attached; the app does not create new host accounts.
+- **Sign in with passkey** — if you've added a passkey to your account, tap **Sign in with passkey** and use Face ID or Touch ID. No password required.
 
 <Tip>
   Add a passkey from your account settings on the web before your first door shift. It's the fastest way to sign staff in on venue Wi-Fi, and it removes shared passwords from your workflow.
 </Tip>
 
-The app keeps you signed in on that device. Sign out from the **Account** tab to revoke the device.
+The app keeps you signed in on that device. Sign out from the **Account** tab (a confirmation prompt appears before the session is revoked) — signing out invalidates that device's tokens on the server, so a lost or stolen phone stops working as soon as you tap it.
 
 ## Running door check-in
 
@@ -64,7 +64,11 @@ The app keeps you signed in on that device. Sign out from the **Account** tab to
   </Step>
 </Steps>
 
-All check-ins from the app appear alongside web check-ins in Studio — a mixed door team can safely use both.
+All check-ins from the app appear alongside web check-ins in Studio — a mixed door team can safely use both. Door stats (sold, checked-in, remaining) refresh every time you return to the screening's Door screen, and you can pull down to refresh at any time.
+
+## Live sales and check-in stats
+
+Open a screening in the app to see the numbers you care about at a glance: **tickets sold**, **revenue**, **checked-in**, and **capacity**. Everything updates as sales come in from the web, from the box office, and from the app itself.
 
 ## Selling a ticket at the door
 
@@ -73,7 +77,7 @@ All check-ins from the app appear alongside web check-ins in Studio — a mixed 
     On the screening detail screen, tap **Sell ticket**. The app confirms your Stripe Terminal reader is connected — this happens automatically the first time you open Sell for a given screening.
   </Step>
   <Step title="Pick a tier and enter the buyer's email">
-    Choose a ticket tier if you have more than one, set the quantity, and enter the buyer's email address. The email is required so their ticket and receipt can be sent.
+    Choose a ticket tier (Standard, Concession, or any custom tier you've added on the screening), set the quantity, and enter the buyer's email address. The email is required so their ticket and receipt can be sent. The tier picker charges the tier's real price — not a rounded or default rate.
   </Step>
   <Step title="Take the payment">
     Tap **Charge**. Hold the buyer's contactless card, Apple Pay, or Google Pay to the back of your iPhone until the confirmation chime plays.

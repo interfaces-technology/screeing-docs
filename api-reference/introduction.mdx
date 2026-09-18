@@ -53,6 +53,7 @@ See the [Authentication guide](/api-reference/authentication) for the full token
 | `/api/v1/auth/devices` | GET | List active devices (web cookie session required) |
 | `/api/v1/auth/revoke` | POST | Revoke one device token |
 | `/api/v1/auth/revoke-all` | POST | Revoke all device tokens (web cookie session required) |
+| `/api/v1/auth/apple/verify` | POST | Verify a native Sign in with Apple identity token and mint device tokens |
 | `/api/v1/auth/mobile/code` | POST | Mint a one-time login code from a web cookie session for native app handoff |
 | `/api/v1/auth/mobile/token` | POST | Exchange a mobile login code for a device token pair |
 | `/api/v1/auth/passkey/authenticate-options` | GET | Fetch a WebAuthn assertion challenge for native passkey sign-in |
