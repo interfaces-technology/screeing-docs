@@ -1,0 +1,68 @@
+---
+title: 'POST /api/v1/host/door/terminal/connection-token — Stripe Terminal Token'
+sidebarTitle: 'Terminal Token'
+description: 'POST /api/v1/host/door/terminal/connection-token mints a scoped Stripe Terminal connection token so the iPhone Tap to Pay reader can attach to the host account.'
+---
+
+Mint a Stripe Terminal connection token so the iPhone Tap to Pay reader can attach to the host's connected Stripe account. Stripe requires a fresh, backend-signed connection token before any Terminal SDK call — this endpoint is the backend for that step.
+
+The endpoint also resolves the screening's venue to a Stripe **Terminal Location**, creating one if the organisation doesn't have a matching location yet. The location ID is returned so you can pass it back to the Terminal SDK on the iPhone.
+
+<Note>
+  This endpoint powers the reader setup in the [Screening for Hosts iOS app](/filmmakers/ios-app). You only need to call it directly if you're building your own in-person point-of-sale on top of Screening.
+</Note>
+
+**Method:** `POST`
+**URL:** `/api/v1/host/door/terminal/connection-token`
+**Auth required:** Host device token (`Authorization: Bearer scr_*`) with door access to the screening
+
+## Request body
+
+<ParamField body="screeningId" type="number" required>
+  The numeric ID of the screening whose venue the reader will be attached to. Must be a positive integer.
+</ParamField>
+
+## Response
+
+<ResponseField name="secret" type="string">
+  The Stripe Terminal connection token secret. Pass this to the Terminal SDK on the iPhone. Short-lived — mint a fresh one for every reader connection.
+</ResponseField>
+
+<ResponseField name="locationId" type="string">
+  The Stripe Terminal Location ID resolved from the screening's venue. Pass this when connecting the Tap to Pay reader.
+</ResponseField>
+
+## Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| `400` | `invalid_json` | Request body is not valid JSON |
+| `400` | `invalid_body` | Missing or invalid `screeningId` |
+| `401` | `unauthorized` | Missing or expired token |
+| `403` | `forbidden` | Signed-in user has no door access to this screening |
+| `403` | `payouts_not_ready` | Stripe Connect onboarding is incomplete |
+| `404` | `not_found` | Screening not found |
+| `500` | `terminal_unavailable` | Stripe rejected the connection token request; the `message` field explains why |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+## Example
+
+```bash cURL
+curl -X POST https://usescreening.com/api/v1/host/door/terminal/connection-token \
+  -H "Authorization: Bearer scr_live_…" \
+  -H "Content-Type: application/json" \
+  -d '{"screeningId": 42}'
+```
+
+**Example response:**
+
+```json
+{
+  "secret": "pst_test_…",
+  "locationId": "tml_…"
+}
+```
+
+<Warning>
+  Never store or reuse Terminal connection tokens across sessions. Each token is intended for a single reader connection.
+</Warning>
