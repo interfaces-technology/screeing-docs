@@ -1,0 +1,152 @@
+---
+title: 'Mobile Login Code — Web-to-App Handoff'
+sidebarTitle: '/auth/mobile'
+description: 'Hand a signed-in web session off to a native app: mint a one-time code in the browser, exchange it in the app for a scoped device token pair.'
+---
+
+The mobile login endpoints let a native app hand off authentication to the web login page instead of shipping its own password form. The user signs in in a system browser, the login page mints a one-time code from their cookie session, and the app exchanges that code for a scoped device token pair.
+
+<Note>
+  The [Screening for Hosts iOS app](/filmmakers/ios-app) does **not** use this flow — it signs in natively with Sign in with Apple or a passkey. This flow is still available for third-party clients that would rather delegate to the web login page.
+</Note>
+
+## When to use this
+
+Use the mobile login code flow when:
+
+- Your native app opens `usescreening.com/login` in `ASWebAuthenticationSession` (iOS) or Chrome Custom Tabs (Android) with `?mobile=1&redirect_uri=<your-scheme>&state=<x>`.
+- You want to reuse the web login UI, including passkeys, invites, and any future flows Screening adds.
+- You don't want to prompt for a password inside your app.
+
+If you'd rather collect the password yourself, use [`POST /api/v1/auth/token`](/api-reference/auth/token) directly.
+
+<Warning>
+  `redirect_uri` must be on Screening's allowlist. Third-party schemes are rejected. Contact Screening if you're building a first-party native integration and need your scheme allowlisted.
+</Warning>
+
+## Endpoints at a glance
+
+| Method | Path | Purpose | Auth |
+|--------|------|---------|------|
+| `POST` | `/api/v1/auth/mobile/code` | Mint a one-time login code from a web cookie session | Web cookie session |
+| `POST` | `/api/v1/auth/mobile/token` | Exchange the code for a device token pair | None |
+
+---
+
+## POST /api/v1/auth/mobile/code
+
+Called by the web login page after the user has signed in. Mints a short-lived one-time code bound to the signed-in user and the requested persona. The code is then redirected back to the app's `redirect_uri` as a `?code=…&state=…` query.
+
+**Auth:** Web cookie session (not device tokens).
+**Rate limit:** 20 requests per minute per IP.
+
+### Request body
+
+<ParamField body="persona" type="string" required>
+  The persona scope the exchanged tokens will have. Must be `host` or `watcher`. `host` requires an approved host organisation on the account.
+</ParamField>
+
+<ParamField body="label" type="string">
+  A human-readable label for the eventual device (for example, `"iPhone 15 Pro"`). Between 1 and 120 characters after trimming. Shown in the device list.
+</ParamField>
+
+### Response
+
+<ResponseField name="code" type="string">
+  The one-time code. Redirect it back to the app as `?code=<code>&state=<state>`.
+</ResponseField>
+
+<ResponseField name="expiresAt" type="string">
+  ISO 8601 timestamp of when the code expires. Codes are short-lived — exchange them immediately.
+</ResponseField>
+
+### Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| `400` | `invalid_json` | Body is not valid JSON |
+| `400` | `invalid_body` | Missing or invalid field |
+| `401` | `unauthorized` | No web cookie session, or the session belongs to a device persona rather than a web user |
+| `403` | `forbidden` | Requested `host` persona but the account has no approved host organisation |
+| `429` | `rate_limited` | Too many requests from this IP |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+---
+
+## POST /api/v1/auth/mobile/token
+
+Called by the native app to exchange the one-time code for a device token pair. The response shape is identical to [`POST /api/v1/auth/token`](/api-reference/auth/token) — the app can share its token-storage code between the two flows.
+
+**Auth:** None (the code is the credential).
+**Rate limit:** 10 requests per minute per IP.
+
+### Request body
+
+<ParamField body="code" type="string" required>
+  The one-time code delivered to the app's `redirect_uri`. Between 16 and 256 characters.
+</ParamField>
+
+<ParamField body="label" type="string">
+  A human-readable label for this device (for example, `"iPhone 15 Pro"`). Between 1 and 120 characters after trimming. Shown in the device list.
+</ParamField>
+
+### Response
+
+Same shape as `/api/v1/auth/token`: `accessToken`, `refreshToken`, `accessTokenPrefix`, `accessExpiresAt`, `refreshExpiresAt`, and `persona`. See [`/auth/token`](/api-reference/auth/token) for the field reference.
+
+### Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| `400` | `invalid_json` | Body is not valid JSON |
+| `400` | `invalid_body` | Missing or invalid `code` |
+| `401` | `invalid_code` | The code is unknown, already used, or expired — the app should restart the sign-in flow |
+| `403` | `forbidden` | The account can't be minted a `host` token (invite-only) |
+| `429` | `rate_limited` | Too many requests from this IP |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+---
+
+## End-to-end flow
+
+<Steps>
+  <Step title="App opens the login page in a system browser">
+    Open `https://usescreening.com/login?mobile=1&redirect_uri=<your-scheme>&state=<random>` using `ASWebAuthenticationSession` (iOS) or Chrome Custom Tabs (Android). The `state` is a random value you'll verify on the way back.
+  </Step>
+  <Step title="User signs in on the web">
+    The login page collects the password or a passkey. If the user is already signed in on the web, the page skips the form and calls `/api/v1/auth/mobile/code` immediately.
+  </Step>
+  <Step title="Login page mints a code">
+    The login page calls `POST /api/v1/auth/mobile/code` with the requested `persona` and forwards the cookie session. It receives a one-time `code`.
+  </Step>
+  <Step title="Login page redirects back to the app">
+    The page redirects to `<your-scheme>?code=<code>&state=<state>`. The system browser closes and the app receives the URL.
+  </Step>
+  <Step title="App exchanges the code for tokens">
+    The app verifies `state` matches, then calls `POST /api/v1/auth/mobile/token` with the `code` and its device `label`. It receives an access + refresh token pair and stores them in the keychain.
+  </Step>
+</Steps>
+
+## Example
+
+```bash Exchange a code for tokens
+curl -X POST https://usescreening.com/api/v1/auth/mobile/token \
+  -H "Content-Type: application/json" \
+  -d '{
+    "code": "ml_…",
+    "label": "iPhone 15 Pro"
+  }'
+```
+
+**Example response:**
+
+```json
+{
+  "accessToken": "scr_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "refreshToken": "scr_rt_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "accessTokenPrefix": "scr_live_xxxx",
+  "accessExpiresAt": "2026-09-19T12:00:00.000Z",
+  "refreshExpiresAt": "2026-10-18T12:00:00.000Z",
+  "persona": "host"
+}
+```

@@ -1,0 +1,73 @@
+---
+title: 'POST /api/v1/auth/apple/verify — Sign In with Apple'
+sidebarTitle: '/auth/apple'
+description: 'Verify a native Sign in with Apple identity token and mint a scoped device token pair for the matching Screening account.'
+---
+
+Verify an Apple identity token from a native **Sign in with Apple** ceremony and mint a device token pair for the matching Screening account. This is what the [Screening for Hosts iOS app](/filmmakers/ios-app) calls after `ASAuthorizationAppleIDProvider` returns a credential.
+
+The endpoint verifies the identity token against Apple's public JWKS (`https://appleid.apple.com/auth/keys`) and only accepts tokens issued for the `com.usescreening.forhosts` audience. The verified token's email is matched to an existing Screening user — this route does **not** create new accounts.
+
+**Method:** `POST`
+**URL:** `/api/v1/auth/apple/verify`
+**Auth required:** None (the Apple identity token is the credential)
+**Rate limit:** 10 requests per minute per IP
+
+## Prerequisites
+
+- Your Screening account must already exist and have the same email as your Apple ID.
+- Apple only sends the email on the **first** Sign in with Apple ceremony for an app. If the user's Apple account has no shared email and the Screening account can't be matched, the endpoint returns `no_email` — the user must sign in another way first (passkey, or password on the web).
+
+## Request body
+
+<ParamField body="identityToken" type="string" required>
+  The identity token JWT returned by `ASAuthorizationAppleIDCredential.identityToken` on iOS.
+</ParamField>
+
+<ParamField body="persona" type="string" required>
+  The persona scope for the returned device tokens. Must be `host` or `watcher`.
+</ParamField>
+
+<ParamField body="label" type="string">
+  A human-readable label for this device (for example, `"iPhone 15 Pro"`). Shown in the device list.
+</ParamField>
+
+## Response
+
+Same shape as [`POST /api/v1/auth/token`](/api-reference/auth/token): `accessToken`, `refreshToken`, `accessTokenPrefix`, `accessExpiresAt`, `refreshExpiresAt`, and `persona`.
+
+## Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| `400` | `invalid_json` / `invalid_body` | Body is malformed, missing a field, or `persona` isn't `host` / `watcher` |
+| `401` | `invalid_token` | The identity token failed verification against Apple's JWKS (wrong issuer, wrong audience, expired, or bad signature) |
+| `401` | `no_email` | The Apple identity token had no email and no matching Screening user could be found — sign in another way first |
+| `403` | `forbidden` | Requested `host` persona but no matching account exists, or the account has no approved host organisation |
+| `429` | `rate_limited` | Too many requests from this IP |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+## Example
+
+```bash cURL
+curl -X POST https://usescreening.com/api/v1/auth/apple/verify \
+  -H "Content-Type: application/json" \
+  -d '{
+    "identityToken": "eyJraWQiOiJ…",
+    "persona": "host",
+    "label": "iPhone 15 Pro"
+  }'
+```
+
+**Example response:**
+
+```json
+{
+  "accessToken": "scr_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "refreshToken": "scr_rt_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "accessTokenPrefix": "scr_live_xxxx",
+  "accessExpiresAt": "2026-09-19T12:00:00.000Z",
+  "refreshExpiresAt": "2026-10-18T12:00:00.000Z",
+  "persona": "host"
+}
+```

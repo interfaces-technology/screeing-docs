@@ -1,0 +1,133 @@
+---
+title: 'Native Passkey Sign-In and Registration for iOS Apps'
+sidebarTitle: '/auth/passkey'
+description: 'Sign in and register passkeys from a native iOS app using ASAuthorizationController. Get a WebAuthn challenge, verify the response, and mint device tokens.'
+---
+
+The native passkey endpoints let an iOS app run the full WebAuthn ceremony without a webview. The app fetches a challenge, hands it to `ASAuthorizationController`, then posts the platform's response back for verification. On a successful authentication ceremony the endpoint mints a device token pair — the app is signed in with a single Face ID or Touch ID prompt.
+
+Passkeys registered from the app share the same Relying Party ID as web passkeys, so a passkey created on the phone works on the web and vice versa.
+
+## When to use this
+
+- Your native app wants to authenticate with Face ID or Touch ID, not a password.
+- You're happy running the WebAuthn ceremony yourself using `ASAuthorizationPlatformPublicKeyCredentialProvider` (or the Android equivalent).
+
+If you'd rather delegate to the web login page — including passkeys — use the [mobile login code flow](/api-reference/auth/mobile) instead.
+
+<Note>
+  Native passkeys require your app's bundle ID to be listed in the Apple App Site Association file at `https://usescreening.com/.well-known/apple-app-site-association`. Contact Screening if you're building a first-party integration and need your bundle ID added.
+</Note>
+
+## Endpoints at a glance
+
+| Method | Path | Purpose | Auth |
+|--------|------|---------|------|
+| `GET` | `/api/v1/auth/passkey/authenticate-options` | Get a WebAuthn assertion challenge | None |
+| `POST` | `/api/v1/auth/passkey/authenticate-verify` | Verify a passkey assertion and mint device tokens | None |
+| `GET` | `/api/v1/auth/passkey/register-options` | Get a WebAuthn registration challenge | Web cookie session |
+| `POST` | `/api/v1/auth/passkey/register-verify` | Verify a new passkey and attach it to the signed-in account | Web cookie session |
+
+Both option endpoints return `{ token, options }` — `options` is the raw WebAuthn options object to hand to the platform authenticator, and `token` is the opaque challenge handle you must echo back on the matching verify call.
+
+---
+
+## Sign in with a passkey
+
+<Steps>
+  <Step title="Get a challenge">
+    `GET /api/v1/auth/passkey/authenticate-options`. No auth. Rate-limited to 20 requests per minute per IP.
+  </Step>
+  <Step title="Present the platform authenticator">
+    Pass `options` to `ASAuthorizationController` and let iOS collect the biometric assertion.
+  </Step>
+  <Step title="Verify and get tokens">
+    `POST /api/v1/auth/passkey/authenticate-verify` with `token`, the platform `response`, `persona` (`host` or `watcher`), and an optional device `label`. On success, the endpoint returns a device token pair with the same shape as [`/auth/token`](/api-reference/auth/token). Rate-limited to 10 requests per minute per IP.
+  </Step>
+</Steps>
+
+### Verify request body
+
+<ParamField body="token" type="string" required>
+  The opaque challenge token returned by `/authenticate-options`.
+</ParamField>
+
+<ParamField body="response" type="object" required>
+  The `AuthenticatorAssertionResponse`-shaped object returned by the platform authenticator.
+</ParamField>
+
+<ParamField body="persona" type="string" required>
+  The persona scope for the returned device tokens. Must be `host` or `watcher`.
+</ParamField>
+
+<ParamField body="label" type="string">
+  A human-readable label for this device (for example, `"iPhone 15 Pro"`). Between 1 and 120 characters after trimming.
+</ParamField>
+
+### Verify error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| `400` | `invalid_json` / `invalid_body` | Malformed body |
+| `401` | `authentication_failed` | Challenge expired, signature invalid, or unknown credential — start a new ceremony |
+| `403` | `forbidden` | Requested `host` persona but the account has no approved host organisation |
+| `429` | `rate_limited` | Too many requests from this IP |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+---
+
+## Register a new passkey
+
+Passkey registration attaches a new credential to an **already signed-in** account. The client must send its web cookie session with both calls — there's no way to register a passkey for an anonymous user.
+
+<Steps>
+  <Step title="Get a registration challenge">
+    `GET /api/v1/auth/passkey/register-options` with the web cookie session. Rate-limited to 20 requests per minute per IP.
+  </Step>
+  <Step title="Create the credential on the device">
+    Pass `options` to `ASAuthorizationController` and let iOS create the platform credential.
+  </Step>
+  <Step title="Verify and save">
+    `POST /api/v1/auth/passkey/register-verify` with `token`, the platform `response`, and an optional `label`. Rate-limited to 10 requests per minute per IP. Returns `{ ok: true }` on success.
+  </Step>
+</Steps>
+
+### Register verify error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| `400` | `invalid_json` / `invalid_body` | Malformed body |
+| `400` | `registration_failed` | Challenge expired or the credential was rejected — restart the ceremony |
+| `401` | `unauthorized` | No web cookie session |
+| `429` | `rate_limited` | Too many requests from this IP |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+---
+
+## Example
+
+```bash Get a sign-in challenge
+curl https://usescreening.com/api/v1/auth/passkey/authenticate-options
+```
+
+```json Response
+{
+  "token": "npk_…",
+  "options": {
+    "challenge": "…",
+    "rpId": "usescreening.com",
+    "userVerification": "required"
+  }
+}
+```
+
+```bash Verify and mint tokens
+curl -X POST https://usescreening.com/api/v1/auth/passkey/authenticate-verify \
+  -H "Content-Type: application/json" \
+  -d '{
+    "token": "npk_…",
+    "response": { "id": "…", "rawId": "…", "type": "public-key", "response": { "…": "…" } },
+    "persona": "host",
+    "label": "iPhone 15 Pro"
+  }'
+```
