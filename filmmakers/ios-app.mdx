@@ -4,10 +4,10 @@ sidebarTitle: 'iOS Host App'
 description: The Screening for Hosts iOS app lets your team check in tickets and sell at the door with Tap to Pay on iPhone — no card reader, no extra hardware.
 ---
 
-**Screening for Hosts** is the native iOS app for filmmakers and door staff. It signs in with your usual Studio account, pulls your upcoming screenings, and puts two on-the-night tools at your fingertips: door check-in (search or QR scan) and in-person ticket sales via **Tap to Pay on iPhone**. There's no separate reader to buy, pair, or charge — you take a payment by holding a contactless card or another phone to the back of yours.
+**Screening for Hosts** is the native iOS app for filmmakers and door staff. It signs in with your usual Studio account, pulls your upcoming screenings, and gives you everything you need on the night: door check-in (search or QR scan), in-person ticket sales via **Tap to Pay on iPhone**, in-app screening creation from a film in your library, and an Insights tab for lifetime totals and monthly trends. There's no separate card reader to buy, pair, or charge — you take a payment by holding a contactless card or another phone to the back of yours.
 
 <Note>
-  The iOS app is a companion to Studio, not a replacement. You still create films, schedule screenings, and manage payouts on the web at [/account](https://usescreening.com/account). The app focuses on the two things you actually do at a venue.
+  The iOS app is a companion to Studio, not a replacement. You still add films, upload posters and stream files, and manage payouts on the web at [/account](https://usescreening.com/account). The app focuses on the things you actually do on the night, plus the shortcuts you want from your phone.
 </Note>
 
 ## What the app does
@@ -17,7 +17,13 @@ description: The Screening for Hosts iOS app lets your team check in tickets and
     Search by name, email, or ticket code, or scan the QR code from a buyer's confirmation email. Admit tickets in one tap. The same one-admission rule as the web check-in tool applies — a re-scanned ticket is flagged as already checked in.
   </Card>
   <Card title="Tap to Pay door sales" icon="credit-card">
-    Sell a ticket at the door using the buyer's contactless card, Apple Pay, or Google Pay held to the back of your iPhone. Their ticket lands in their email in seconds and is immediately admissible at the door.
+    Sell a ticket at the door using the buyer's contactless card, Apple Pay, or Google Pay held to the back of your iPhone. The buyer's ticket lands in their email in seconds and is immediately admissible at the door.
+  </Card>
+  <Card title="Create a screening in the app" icon="calendar-plus">
+    Tap the floating **+** button on any tab, pick a film from your library, set title, showtime, price, venue, and description, and post. Uses the same publish flow as Studio, so it shows up on your booth page as soon as you save.
+  </Card>
+  <Card title="Insights" icon="chart-line">
+    Lifetime revenue, tickets sold, and screening count at a glance, with a six-month revenue trend and a per-screening breakdown. Backed by ticket-level data, so it matches Studio's Money view.
   </Card>
 </CardGroup>
 
@@ -88,6 +94,36 @@ Open a screening in the app to see the numbers you care about at a glance: **tic
 </Steps>
 
 Door sales use the same fees, payouts, and Stripe Connect settings as your online sales. See [Fees explained](/payouts/fees-explained) for the fee schedule.
+
+## Creating a screening from the app
+
+Every tab in the app has a floating **+** button in the bottom-right corner. Tap it from anywhere to schedule a new night:
+
+<Steps>
+  <Step title="Pick a film">
+    The app lists the films already in your library. Choose the one you're screening — you can't upload a new film or stream file from the app, so add those on the web first.
+  </Step>
+  <Step title="Fill in the details">
+    Set the screening's public title, showtime, ticket price, venue, and description. These are the same fields as Studio's create-a-screening form.
+  </Step>
+  <Step title="Post">
+    Tap **Save**. The screening is created via the same endpoint the web uses, so it appears in your Screenings list, in Insights, and on your booth page immediately.
+  </Step>
+</Steps>
+
+<Note>
+  The app creates and edits the on-the-night details. Anything that isn't shown in the app — tiers beyond the default price, cover art, on-demand rent/buy pricing, share kit assets — is still edited from Studio on the web.
+</Note>
+
+## Insights
+
+Open the **Insights** tab to see how you're doing across every screening you've ever run.
+
+- **Lifetime totals** — total revenue, total tickets sold, and number of screenings.
+- **6-month revenue trend** — a chart of monthly revenue for the last six months.
+- **Per-screening breakdown** — one row per screening (newest first) with tickets sold, revenue, capacity, and status. Tap a row to open its screening detail screen.
+
+Insights is calculated from ticket-level data (paid, non-revoked tickets in the `valid` or `used` states), so its numbers match Studio's Money view. Refunded or cancelled tickets are excluded.
 
 ## When sales are blocked
 

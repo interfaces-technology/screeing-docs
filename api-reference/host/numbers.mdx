@@ -1,0 +1,105 @@
+---
+title: 'GET /api/v1/host/account/numbers — Host Revenue and Ticket Insights'
+sidebarTitle: 'Numbers'
+description: 'GET /api/v1/host/account/numbers returns lifetime totals, a six-month revenue trend, and per-screening ticket + revenue rows for a host organisation.'
+---
+
+Return the numbers behind the host's dashboard: lifetime totals, a six-month monthly revenue trend, and a per-screening breakdown. This is what powers the **Insights** tab in the [Screening for Hosts iOS app](/filmmakers/ios-app) and the equivalent view in Studio.
+
+Figures are computed at the ticket level — only tickets whose status is `valid` or `used` and that have not been revoked are counted. Refunded or cancelled tickets are excluded, which keeps totals in line with the per-screening analytics.
+
+**Method:** `GET`
+**URL:** `/api/v1/host/account/numbers`
+**Auth required:** Host session or device token with `admin` access to the organisation
+
+## Query parameters
+
+<ParamField query="organisationId" type="number">
+  The numeric ID of the organisation to load numbers for. Optional — if omitted, the caller's first organisation is used. Callers with access to multiple organisations should pass this explicitly.
+</ParamField>
+
+## Response
+
+<ResponseField name="numbers" type="object">
+  Container for the totals and breakdowns below. When the caller has no organisations, `numbers` is returned with zeroed totals and empty arrays rather than a `404`.
+</ResponseField>
+
+<ResponseField name="numbers.totalRevenuePence" type="number">
+  Lifetime gross revenue for the organisation, in the smallest currency unit (pence, cents).
+</ResponseField>
+
+<ResponseField name="numbers.totalTicketsSold" type="number">
+  Lifetime count of paid, non-revoked tickets.
+</ResponseField>
+
+<ResponseField name="numbers.screeningsCount" type="number">
+  Total number of screenings the organisation has created, regardless of status.
+</ResponseField>
+
+<ResponseField name="numbers.monthly" type="array">
+  Up to six entries covering the current month and the five prior calendar months. Months with zero paid tickets are omitted.
+
+  Each entry contains:
+  - `month` — `YYYY-MM` calendar month.
+  - `revenuePence` — revenue booked in that month.
+  - `ticketsSold` — paid tickets booked in that month.
+</ResponseField>
+
+<ResponseField name="numbers.screenings" type="array">
+  One entry per screening, ordered by showtime (newest first). Each entry contains:
+  - `id` — screening ID.
+  - `title` — public title.
+  - `showtimeIso` — ISO 8601 showtime.
+  - `status` — screening status (`draft`, `published`, `cancelled`, etc.).
+  - `capacity` — configured capacity, or `null` if uncapped.
+  - `ticketsSold` — paid tickets for that screening.
+  - `revenuePence` — revenue for that screening.
+</ResponseField>
+
+## Error codes
+
+| HTTP | Code | Meaning |
+|------|------|---------|
+| `400` | `invalid_input` | `organisationId` isn't a positive integer |
+| `401` | `unauthorized` | Missing or expired session |
+| `403` | `forbidden` | Caller has no admin access to the requested organisation |
+| `500` | `numbers_failed` | Server error while computing totals |
+| `503` | `auth_not_configured` | Auth is not configured on this deployment |
+
+## Example
+
+```bash cURL
+curl 'https://usescreening.com/api/v1/host/account/numbers?organisationId=17' \
+  -H 'Authorization: Bearer scr_live_…'
+```
+
+**Example response:**
+
+```json
+{
+  "numbers": {
+    "totalRevenuePence": 482500,
+    "totalTicketsSold": 613,
+    "screeningsCount": 12,
+    "monthly": [
+      { "month": "2026-04", "revenuePence": 24000, "ticketsSold": 32 },
+      { "month": "2026-05", "revenuePence": 61500, "ticketsSold": 82 },
+      { "month": "2026-06", "revenuePence": 88000, "ticketsSold": 110 },
+      { "month": "2026-07", "revenuePence": 72500, "ticketsSold": 96 },
+      { "month": "2026-08", "revenuePence": 105000, "ticketsSold": 138 },
+      { "month": "2026-09", "revenuePence": 131500, "ticketsSold": 155 }
+    ],
+    "screenings": [
+      {
+        "id": 942,
+        "title": "Ghosts of the Bayou — Q&A",
+        "showtimeIso": "2026-09-18T19:30:00.000Z",
+        "status": "published",
+        "capacity": 120,
+        "ticketsSold": 87,
+        "revenuePence": 78300
+      }
+    ]
+  }
+}
+```

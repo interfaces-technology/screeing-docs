@@ -86,6 +86,7 @@
             "group": "Host API",
             "pages": [
               "api-reference/host/bootstrap",
+              "api-reference/host/numbers",
               "api-reference/host/films",
               "api-reference/host/screenings",
               "api-reference/host/door-check-in",
