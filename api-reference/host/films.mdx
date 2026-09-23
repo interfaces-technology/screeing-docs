@@ -36,6 +36,7 @@ List every film belonging to your organisation. Pass `organisationId` to scope t
     {
       "id": 12,
       "title": "Coastal Light",
+      "description": "A summer of tide pools and long shadows on the Cornish coast.",
       "director": "Amara Osei",
       "year": 2024,
       "runtimeMinutes": 94,
@@ -80,6 +81,10 @@ Create a new film record. You need the `canManageCms` capability (host admin) to
   Publicly accessible URL for a film still. Used as the product image in the Stripe Checkout session. Maximum 2 000 characters.
 </ParamField>
 
+<ParamField body="trailerUrl" type="string">
+  Optional external trailer URL. Leave unset if you plan to upload a trailer file directly to Mux from Studio — the upload sets the trailer playback ID on the film automatically. Maximum 2 000 characters.
+</ParamField>
+
 <ParamField body="attestRights" type="boolean">
   Set to `true` to confirm you hold the necessary distribution rights for this film. **This field must be `true` before you can publish an `online` or `hybrid` screening attached to this film.** You are the merchant of record; Screening cannot verify rights on your behalf.
 </ParamField>
@@ -118,7 +123,35 @@ Fetch a single film by its numeric ID.
 
 ## PATCH /api/v1/host/films/:id
 
-Update any combination of fields on an existing film. All fields from the `POST` body are accepted; all are optional.
+Update any combination of fields on an existing film. All fields from the `POST` body are accepted; all are optional. `PATCH` also accepts the fields below that are not available on create.
+
+<ParamField body="description" type="string">
+  Short synopsis for the film. Shown on the public film page and used as the SEO description for search results and link previews. Maximum 800 characters. Pass `null` to clear.
+</ParamField>
+
+<ParamField body="slug" type="string">
+  URL slug for the film's public page at `/{org}/film/{slug}`. Between 1 and 80 characters. Changing the slug breaks any existing links buyers already have.
+</ParamField>
+
+<ParamField body="rentEnabled" type="boolean">
+  Enable rentals for this film. Requires both `rentPricePence` and `rentDurationHours` to be set before the on-demand offer becomes purchasable.
+</ParamField>
+
+<ParamField body="rentPricePence" type="number">
+  Rent price in the smallest currency unit (pence for GBP). Positive integer up to 1 000 000.
+</ParamField>
+
+<ParamField body="rentDurationHours" type="number">
+  Length of the rental access window in hours, counted from purchase. Positive integer.
+</ParamField>
+
+<ParamField body="buyEnabled" type="boolean">
+  Enable permanent purchases for this film. Requires `buyPricePence` to be set.
+</ParamField>
+
+<ParamField body="buyPricePence" type="number">
+  Buy price in the smallest currency unit. Positive integer up to 1 000 000.
+</ParamField>
 
 <Note>
   Updating `runtimeMinutes` on a film that already has published screenings affects future stream windows but does not retroactively change tokens already issued to ticket holders.
