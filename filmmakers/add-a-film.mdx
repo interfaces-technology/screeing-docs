@@ -43,6 +43,7 @@ Films are the canonical entity in Screening. You create a film record once, then
 | **Year** | The production or release year. |
 | **Poster image** | Recommended aspect ratio is 2:3 (standard film poster). Appears on the booth, Discover, and the film page. |
 | **Film still** | A landscape image used as a banner or background. |
+| **Description** | A short synopsis shown on the public film page and used as the SEO description for search results and link previews. Up to 800 characters. |
 
 ### Rights attestation
 
@@ -74,6 +75,29 @@ Screening delivers your film through [Mux](https://mux.com) using signed playbac
 <Warning>
   Online and hybrid screenings require a ready stream file before you can publish. If the file is still processing when you try to publish, Studio will block the action and show a status message.
 </Warning>
+
+## Uploading a trailer
+
+You can attach a trailer to any film. The trailer is uploaded to Mux alongside the feature file and appears as a preview frame on the public film page at `usescreening.com/{org}/film/{film-slug}`. It's public — no ticket or rental required to see it.
+
+<Steps>
+  <Step title="Open the film record">
+    In **Studio → Films**, click the film you want to add a trailer to.
+  </Step>
+  <Step title="Go to the Trailer section">
+    Scroll to the **Trailer** section on the film detail page. It sits below the main stream file.
+  </Step>
+  <Step title="Upload the trailer file">
+    Click **Upload trailer** and select your video file. The upload runs from your browser directly to Mux — the same flow used for feature files.
+  </Step>
+  <Step title="Wait for processing">
+    Mux transcodes the trailer after upload. Processing usually completes within a couple of minutes for a short clip. The Trailer section shows a ready status once it's live on the film page.
+  </Step>
+</Steps>
+
+<Note>
+  Trailers are optional. A film without a trailer still gets a public film page as soon as it has a published screening or on-demand pricing configured.
+</Note>
 
 ## On-demand options
 
