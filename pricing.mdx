@@ -11,13 +11,28 @@ Screening charges a single all-in rate on every paid ticket and on-demand sale. 
 | Plan | Platform fee | What's included |
 |---|---|---|
 | **Free** | **5% + 30p** per paid ticket | Full ticketing, live streaming, on-demand, email reminders, Studio, door check-in |
-| **Pro** *(coming soon)* | **4% + 30p** per paid ticket | Everything in Free, plus audience export, segmentation, and CRM tools — at ~£20–25/mo |
+| **Pro** | **4% + 30p** per paid ticket | Everything in Free, plus audience segmentation, exports, campaign attribution, and follow-up workflows |
+| **Studio** *(coming soon)* | Pricing announced at launch | Everything in Pro, plus custom branding, more team members, automations, and integrations — waitlist only today |
 
 <Note>
   **"All-in" means exactly that.** The 5% + 30p covers Stripe's card processing costs on standard domestic card transactions — there is no additional payment processing fee added on top. Screening absorbs the Stripe fee so that the rate you see is the rate you pay.
 </Note>
 
-Pro is not yet available. When it launches, the 1% fee reduction is a perk bundled with audience tools — it will not be sold as a standalone fee discount without the accompanying features.
+The 1% ticket-fee reduction on Pro is bundled with the audience and reporting tools listed above. Screening does not sell a standalone fee discount.
+
+## Upgrade to Pro
+
+Only an organisation owner can start a Pro subscription. In Studio, go to **Money → Plan and billing** and select **Upgrade to Pro**. You are redirected to Stripe Checkout to enter card details; on success you return to Studio and the plan switches to Pro straight away. Every paid ticket sold from that point takes the Pro rate of **4% + 30p** instead of 5% + 30p.
+
+To change payment method, download an invoice, or cancel, open **Money → Plan and billing** and select **Manage subscription**. That opens the Stripe Billing Portal for your organisation. Cancellations take effect at the end of the current billing period; your plan drops back to Free once the period ends.
+
+<Note>
+  Ticket sales and payouts continue to run through your Stripe Connect account. Your Pro subscription is a separate charge on the card you enter at checkout — it is not deducted from ticket revenue.
+</Note>
+
+## Studio waitlist
+
+Studio is not yet purchasable. Join the waitlist from **Money → Plan and billing** in Studio, or from the plans grid at [usescreening.com/pricing](https://usescreening.com/pricing). Screening emails you when Studio opens.
 
 ## Worked example
 
@@ -79,7 +94,7 @@ Understanding what happens at checkout helps you set ticket prices that protect 
 | Standard ticket (Free tier) | £15.00 | £1.05 (5% + 30p) | £13.95 |
 | Standard ticket (Free tier) | £20.00 | £1.30 (5% + 30p) | £18.70 |
 | Free ticket | £0.00 | £0.00 | £0.00 |
-| Pro tier ticket *(coming soon)* | £10.00 | £0.70 (4% + 30p) | £9.30 |
+| Pro tier ticket | £10.00 | £0.70 (4% + 30p) | £9.30 |
 
 <Info>
   These figures show what Screening deducts. Stripe may apply additional fees on high-risk cards, international transactions, or currency conversions in edge cases — the "all-in" promise covers standard domestic card processing on GBP transactions.
@@ -92,7 +107,7 @@ Understanding what happens at checkout helps you set ticket prices that protect 
     Payouts go directly to your connected Stripe Express account. Stripe's standard payout schedule applies — typically 2–7 business days after a transaction, depending on your account's payout settings and country. Screening does not hold funds or control payout timing beyond what Stripe requires.
   </Accordion>
   <Accordion title="Do I need a monthly subscription to use Screening?">
-    No. The Free tier has no monthly fee. You pay 5% + 30p only when you make a sale. Pro (coming soon) will carry a monthly subscription but also reduces the fee rate to 4% + 30p and unlocks audience tools.
+    No. The Free tier has no monthly fee. You pay 5% + 30p only when you make a sale. Pro carries a monthly subscription, reduces the ticket fee to 4% + 30p, and unlocks audience tools. You can start or cancel a Pro subscription any time from **Studio → Money → Plan and billing**.
   </Accordion>
   <Accordion title="Can I pass the fee on to buyers?">
     Ticket prices are set by you in Studio. If you want to price tickets at £10.80 to recover the fee on a £10 net payout, that is your choice — but Screening does not have a built-in "pass fee to buyer" toggle. The fee is simply deducted from what Screening forwards to your Stripe account.
