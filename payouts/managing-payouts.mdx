@@ -26,7 +26,9 @@ Stripe Express operates on a **rolling 2–7 day payout schedule** for most acco
 
 ## Currency and international accounts
 
-Screening runs a GBP-first checkout. If your Stripe account is in a country that settles in a different currency, Stripe will convert and pay out in your local payout currency. Foreign cards (EUR, USD, AUD, etc.) are accepted at checkout — Stripe handles the conversion.
+Screening runs a GBP-first checkout. Checkout uses Stripe Adaptive Pricing, so buyers outside the UK may see and pay the ticket price in their local currency. You don't need to change any settings. Your sale still settles in the screening's currency at the ticket price you set, and your ticket sales in Studio reflect that amount.
+
+If your Stripe account is in a country that settles in a different currency, Stripe converts the funds and pays out in your local payout currency.
 
 ## Accessing detailed payout history
 

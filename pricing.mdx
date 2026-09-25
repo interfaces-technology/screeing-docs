@@ -63,8 +63,8 @@ Understanding what happens at checkout helps you set ticket prices that protect 
   <Accordion title="Recommended minimum: £8 for online and hybrid tickets">
     On a very low ticket price, international card fees and foreign exchange costs can erode your payout significantly. Screening recommends a minimum ticket price of **£8** for online and hybrid nights to protect your margin, especially if you expect buyers paying from outside the UK.
   </Accordion>
-  <Accordion title="GBP-first checkout; foreign cards accepted">
-    Checkout runs in GBP by default. Buyers using foreign-issued cards (EUR, USD, AUD, NZD, and others) can still complete their purchase — Stripe handles the conversion. If you are a host based outside the UK with a non-GBP Stripe Connect account, you settle payouts in your account's payout currency.
+  <Accordion title="GBP-first checkout with local-currency pricing">
+    Screenings are priced in GBP by default. Buyers outside the UK may see the price in their local currency at checkout through Stripe Adaptive Pricing. Stripe sets the exchange rate, and the buyer pays any conversion cost. Your sale still settles at the GBP price you set. If you are a host based outside the UK with a non-GBP Stripe Connect account, you settle payouts in your account's payout currency.
   </Accordion>
   <Accordion title="All sales final — no host refund UI">
     There is no in-app refund button in v1. All ticket sales are treated as final at the point of purchase. If a buyer raises a chargeback with their bank, that is handled outside Screening via Stripe directly. Scheduling changes (postponements and cancellations) send automated emails to ticket holders but do not trigger automatic refunds through the platform.
