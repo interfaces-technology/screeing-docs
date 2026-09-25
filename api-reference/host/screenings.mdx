@@ -137,6 +137,10 @@ Create a new screening night. You need the `canManageCms` capability (host admin
   Mark this as the opening-night premiere. Only one screening per film can be a premiere. Subsequent screenings should be scheduled as encores.
 </ParamField>
 
+<ParamField body="premiereArchetype" type='"living_room" | "community_hall" | "cinema_world"'>
+  Optional premiere shape, matching the **Premiere shape** options in Studio. Use it with `isPremiere: true` to record what kind of opening night you're hosting. The API stores the value but does not change `format`, `capacity`, or `venueName` for you. Set those fields explicitly. Pass `null` or omit it for no shape.
+</ParamField>
+
 <ParamField body="attestRights" type="boolean">
   Confirm distribution rights at the screening level. If you already set `attestRights: true` on the film record, this field is optional.
 </ParamField>
