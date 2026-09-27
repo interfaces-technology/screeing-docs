@@ -10,13 +10,13 @@ Studio is your filmmaker command centre, available at [/account](https://usescre
 
 <CardGroup cols={2}>
   <Card title="Home" icon="house">
-    Your at-a-glance dashboard. See your next upcoming screening, the onboarding activation checklist, and suggested next actions. Before you've completed onboarding, Home surfaces exactly what's blocking you from going live.
+    Your at-a-glance dashboard. See your next upcoming screening, copy your public links, the onboarding activation checklist, and suggested next actions. Before you've completed onboarding, Home surfaces exactly what's blocking you from going live.
   </Card>
   <Card title="Films" icon="film">
     Your catalogue. Add a new film, upload a poster and stream file, configure on-demand rent and buy pricing, and schedule screening nights directly from a film record. Films are the canonical entity in Studio — create each film once and reuse it across multiple nights.
   </Card>
   <Card title="Nights" icon="calendar">
-    A calendar view of all your screenings. Open any night to edit its details, change the status, publish it, access the share kit, or switch to the door check-in view. Nights you haven't published yet appear as Coming Soon to buyers.
+    A calendar view of all your screenings. Open any night to edit its details, change the status, publish it, copy its public links, or switch to the door check-in view. Nights you haven't published yet appear as Coming Soon to buyers.
   </Card>
   <Card title="People" icon="users">
     Your audience list. View everyone who has bought a ticket, followed your organisation, or signed up to a waitlist. Use People to understand demand and keep in touch with your audience.
@@ -40,17 +40,17 @@ Sign in at [/account](https://usescreening.com/account) with your email address 
   Passkeys are faster and more secure than passwords. Set one up in **Studio → Account** after your first sign-in.
 </Tip>
 
-## Share kit
+## Public links
 
-Every published screening comes with a share kit you can access from the night detail view in Studio:
+Studio shows a **Public links** panel on Home, on each film's detail page, and on each night's detail page. Every link opens on `watch.usescreening.com`, the buyer-facing surface. Select **Copy** next to a link to copy the full URL.
 
-| Asset | What it is |
-|-------|-----------|
-| **Booth link** | Your primary public URL: `usescreening.com/{org}/{slug}` |
-| **Short link** | A compact redirect: `usescreening.com/r/{code}` — useful for social posts and printed materials |
-| **Invite text** | Pre-written copy you can paste into social posts, emails, or a group chat |
-| **QR code** | A downloadable QR image that links to your booth — print it on posters or slides |
-| **Calendar file** | A `.ics` download that adds your screening to any calendar app |
+| Location | Links |
+|----------|-------|
+| **Home** | Organisation page, plus the share link and ticket page for your next published night |
+| **Film detail** | Organisation page and film page |
+| **Night detail** | Organisation page, share link (`/r/{code}`), ticket page, invite text, live stream, calendar file (`.ics`), and a downloadable QR code |
+
+See [Publish and share](/filmmakers/publish-and-share#public-links) for details on each night asset.
 
 ## Roles at a glance
 

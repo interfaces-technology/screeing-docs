@@ -4,7 +4,7 @@ sidebarTitle: 'Publish & Share'
 description: Publish your screening to open ticket sales, share your booth link, and manage the lifecycle — postpone, cancel, and monitor sales.
 ---
 
-Publishing a screening opens your booth and enables Stripe Checkout so buyers can purchase tickets. Before you publish, work through the checklist below to make sure everything is in place. Once you're live, use the share kit to spread the word — then monitor sales from Studio as they come in.
+Publishing a screening opens your booth and enables Stripe Checkout so buyers can purchase tickets. Before you publish, work through the checklist below to make sure everything is in place. Once you're live, use the **Public links** panel to spread the word — then monitor sales from Studio as they come in.
 
 ## Pre-publish checklist
 
@@ -42,7 +42,7 @@ Run through these checks in Studio before clicking Publish:
     Click the **Publish** button. Screening opens the booth at `usescreening.com/{org}/{slug}`, enables Stripe Checkout, and marks the screening as Published.
   </Step>
   <Step title="Share your booth">
-    Use the share kit (see below) to send your booth link to your audience and post it on social media.
+    Use the **Public links** panel (see below) to send your booth link to your audience and post it on social media.
   </Step>
 </Steps>
 
@@ -53,22 +53,43 @@ Run through these checks in Studio before clicking Publish:
 | **Primary booth** | `usescreening.com/{org}/{slug}` | Your canonical link — use this everywhere you can |
 | **Short link** | `usescreening.com/r/{code}` | Social posts, printed materials, anywhere character count matters |
 
-## Share kit
+## Public links
 
-Access the share kit from the night detail page in Studio. All assets update automatically when you change the screening details.
+Every link you copy from Studio opens on `watch.usescreening.com`, the buyer-facing surface where your audience buys tickets and watches films. Studio shows a **Public links** panel in three places:
+
+| Where | Links shown |
+|-------|-------------|
+| **Studio → Home** | Your organisation page, plus the share link and ticket page for your next published night |
+| **Film detail page** | Your organisation page and the film's public page |
+| **Night detail page** | The full set of assets for that night (see below) |
+
+Select **Copy** next to any link to copy the full URL to your clipboard.
+
+### Night assets
+
+The **Public links** panel on the night detail page includes everything you need to promote a single screening. All assets update automatically when you change the screening details.
 
 <CardGroup cols={2}>
-  <Card title="Booth link" icon="link">
-    Copy the primary booth URL to paste into emails, newsletters, or anywhere you drive traffic.
+  <Card title="Organisation page" icon="building">
+    Your organisation's public page, where buyers can browse all your screenings and follow you.
   </Card>
-  <Card title="QR code" icon="qrcode">
-    Download a QR image that links to your booth. Print it on posters, flyers, or use it in slide decks at festivals.
+  <Card title="Share link" icon="link">
+    The short link (`/r/{code}`) to your booth. Paste it into social posts, emails, or printed materials.
+  </Card>
+  <Card title="Ticket page" icon="ticket">
+    The primary booth URL where buyers purchase tickets.
   </Card>
   <Card title="Invite text" icon="pen">
     Pre-written copy you can drop straight into a social post, group chat, or press release.
   </Card>
+  <Card title="Live stream" icon="video">
+    The live page link for online and hybrid screenings. Only buyers with a valid ticket can watch.
+  </Card>
   <Card title="Calendar file" icon="calendar">
-    A `.ics` file your audience can add to any calendar app — includes title, time, and your booth URL.
+    A `.ics` file your audience can add to any calendar app. It includes the title, time, and your booth URL.
+  </Card>
+  <Card title="QR code" icon="qrcode">
+    Download a PNG QR code that links to your booth. Print it on posters and flyers, or use it in slide decks at festivals.
   </Card>
 </CardGroup>
 
